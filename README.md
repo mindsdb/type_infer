@@ -1,2 +1,2 @@
 # type-infer
-Type inference for Machine Learning pipelines
+Automated type inference for Machine Learning pipelines.
