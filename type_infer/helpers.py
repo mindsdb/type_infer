@@ -69,7 +69,6 @@ def initialize_log():
 log = initialize_log()
 
 
-
 def get_identifier_description_mp(arg_tup):
     data, column_name, data_dtype = arg_tup
     return get_identifier_description(data, column_name, data_dtype)
@@ -225,6 +224,7 @@ def analyze_sentences(data):
 def tokenize_text(text):
     return [t.lower() for t in nltk.word_tokenize(decontracted(text)) if contains_alnum(t)]
 
+
 def decontracted(phrase):
     # specific
     phrase = re.sub(r"won\'t", "will not", phrase)
@@ -240,6 +240,7 @@ def decontracted(phrase):
     phrase = re.sub(r"\'ve", " have", phrase)
     phrase = re.sub(r"\'m", " am", phrase)
     return phrase
+
 
 def contains_alnum(text):
     for c in text:

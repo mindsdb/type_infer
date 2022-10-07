@@ -14,7 +14,8 @@ import numpy as np
 from type_infer.base import TypeInformation
 from type_infer.dtype import dtype
 from type_infer.helpers import seed, log  # TODO: move somewhere else?
-from type_infer.helpers import is_nan_numeric, get_identifier_description_mp, cast_string_to_python_type, get_language_dist, analyze_sentences
+from type_infer.helpers import is_nan_numeric, get_identifier_description_mp, cast_string_to_python_type, \
+    get_language_dist, analyze_sentences
 
 
 # @TODO: hardcode for distance, time, subunits of currency (e.g. cents) and other common units
