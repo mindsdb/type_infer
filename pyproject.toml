@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "type-infer"
+name = "type_infer"
 version = "0.0.1"
 description = "Automated type inference for Machine Learning pipelines."
 authors = ["MindsDB Inc. <hello@mindsdb.com>"]
@@ -8,11 +8,13 @@ readme = "README.md"
 packages = [{include = "type_infer"}]
 
 [tool.poetry.dependencies]
-python = "^3.9, > 3.6"
+python = ">=3.8,<3.10"
 python-dateutil = "^2.8.2"
-scipy = "^1.9.1"
-numpy = "^1.23.3"
-pandas = "^1.5.0"
+scipy = "~1"
+numpy = "~1.22"
+pandas = "~1.3"
+dataclasses-json = "^0.5.7"
+colorlog = "^6.7.0"
 
 
 [build-system]
