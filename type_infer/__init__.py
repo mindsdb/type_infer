@@ -1,3 +1,3 @@
-from type_infer.__about__ import __package_name__ as name, __version__
+__version__ = "0.0.2"
 
 __all__ = ['base', 'dtype', 'infer', 'helpers', '__version__']
