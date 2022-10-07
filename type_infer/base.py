@@ -1,5 +1,6 @@
 from typing import Dict
 
+
 @dataclass_json
 @dataclass
 class TypeInformation:
