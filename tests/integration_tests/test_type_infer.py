@@ -37,3 +37,36 @@ class TestTypeInference(unittest.TestCase):
         }
         self.assertEqual(expected_types, inferred_types.dtypes)
         self.assertEqual(expected_ids, inferred_types.identifiers)
+
+    def test_1_stack_overflow_survey(self):
+        df = pd.read_csv("tests/data/stack_overflow_survey_sample.csv")
+        inferred_types = infer_types(df, pct_invalid=0)
+
+        expected_types = {
+            'Respondent': 'integer',
+            'Professional': 'binary',
+            'ProgramHobby': 'categorical',
+            'Country': 'short_text',
+            'University': 'categorical',
+            'EmploymentStatus': 'binary',
+            'FormalEducation': 'categorical',
+            'CompanySize': 'tags',
+            'CompanyType': 'tags',
+            'CareerSatisfaction': 'integer',
+            'JobSatisfaction': 'integer',
+            'HoursPerWeek': 'integer',
+            'AssessJobRemote': 'categorical',
+            'LearnedHiring': 'tags',
+            'ImportantHiringOpenSource': 'categorical',
+            'TabsSpaces': 'categorical',
+            'ExCoderReturn': 'invalid',
+        }
+        expected_ids = {
+            'Professional': 'No Information'
+        }
+
+        for col in expected_types:
+            self.assertTrue(expected_types[col], inferred_types.dtypes[col])
+
+        for col in expected_ids:
+            self.assertTrue(expected_ids[col], inferred_types.identifiers[col])
