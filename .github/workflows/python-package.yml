@@ -50,6 +50,7 @@ jobs:
         pip install poetry
     - name: Build and publish
       env:
+        POETRY_HTTP_BASIC_PYPI_USERNAME:  __token__
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_PASSWORD }}
       run: |
         poetry build
