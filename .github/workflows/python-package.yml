@@ -52,7 +52,7 @@ jobs:
       run: poetry build
     - name: Publish
       env:
-        POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        POETRY_HTTP_BASIC_PYPI_USERNAME: __token__
         POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         poetry publish --dry-run
