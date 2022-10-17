@@ -36,6 +36,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    environment: PublishCI
     needs: test
     if: github.ref == 'refs/heads/stable'
     steps:
