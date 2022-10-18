@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Type Infer &mdash; type_infer 0.0.4 documentation</title>
+  <title>Type Infer &mdash; type_infer 0.0.5 documentation</title>
   
 
   
@@ -44,7 +44,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="api.html" /> 
+    <link rel="next" title="Base" href="base.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.0.4
+                0.0.5
               </div>
             
           
@@ -97,7 +97,10 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">API</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="dtype.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Data</span> <span class="pre">types</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="infer.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Infer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Helpers</span></code></a></li>
 </ul>
 
             
@@ -193,7 +196,7 @@
 <h1>Type Infer<a class="headerlink" href="#type-infer" title="Permalink to this headline">¶</a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Release</dt>
-<dd class="field-odd"><p>0.0.4</p>
+<dd class="field-odd"><p>0.0.5</p>
 </dd>
 <dt class="field-even">Date</dt>
 <dd class="field-even"><p>Oct 18, 2022</p>
@@ -202,13 +205,13 @@
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">type_infer</span></code> is a Python package aimed at automatically inferring the data type for each column in a tabular dataset.</p>
+<p>Welcome to the <code class="docutils literal notranslate"><span class="pre">type_infer</span></code> documentation. <code class="docutils literal notranslate"><span class="pre">type_infer</span></code> is a Python package aimed at automatically inferring the data type for each column in a tabular dataset.</p>
 <div class="section" id="quick-guide">
 <h2>Quick Guide<a class="headerlink" href="#quick-guide" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="#installation"><span class="std std-ref">Installation</span></a></p></li>
-<li><p><span class="xref std std-ref">Example Use Cases</span></p></li>
-<li><p><span class="xref std std-ref">Contribute to Lightwood</span></p></li>
+<li><p><a class="reference internal" href="#quick-start"><span class="std std-ref">Quick start</span></a></p></li>
+<li><p><a class="reference internal" href="#contributions"><span class="std std-ref">Contribute</span></a></p></li>
 </ul>
 </div>
 <div class="section" id="installation">
@@ -294,13 +297,6 @@
 <p>Please note that this project is released with a <a class="reference external" href="https://github.com/mindsdb/lightwood/blob/stable/CODE_OF_CONDUCT.md">Contributor Code of Conduct</a>. By participating in this project, you agree to abide by its terms.</p>
 </div>
 </div>
-<div class="section" id="current-contributors">
-<h2>Current contributors<a class="headerlink" href="#current-contributors" title="Permalink to this headline">¶</a></h2>
-<embed>
-<a href="https://github.com/mindsdb/lightwood/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=mindsdb/lightwood" />
-</a>
-</embed></div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
 <embed>
@@ -313,7 +309,25 @@
 <h2>Other Links<a class="headerlink" href="#other-links" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">API</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Base</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="base.html#base.TypeInformation">TypeInformation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dtype.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Data</span> <span class="pre">types</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dtype.html#dtype.dtype">dtype</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="infer.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Infer</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="infer.html#infer.calculate_sample_size">calculate_sample_size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="infer.html#infer.get_column_data_type">get_column_data_type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="infer.html#infer.get_numeric_type">get_numeric_type</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Helpers</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="helpers.html#helpers.cast_string_to_python_type">cast_string_to_python_type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helpers.html#helpers.is_nan_numeric">is_nan_numeric</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -325,7 +339,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="base.html" class="btn btn-neutral float-right" title="Base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

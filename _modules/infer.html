@@ -1,0 +1,644 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>infer &mdash; type_infer 0.0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/mindsdblogo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dtype.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Data</span> <span class="pre">types</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../infer.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Infer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../helpers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Helpers</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">type_infer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>infer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for infer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">imghdr</span>
+<span class="kn">import</span> <span class="nn">sndhdr</span>
+<span class="kn">import</span> <span class="nn">dateutil</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">type_infer.base</span> <span class="kn">import</span> <span class="n">TypeInformation</span>
+<span class="kn">from</span> <span class="nn">type_infer.dtype</span> <span class="kn">import</span> <span class="n">dtype</span>
+<span class="kn">from</span> <span class="nn">type_infer.helpers</span> <span class="kn">import</span> <span class="n">seed</span><span class="p">,</span> <span class="n">log</span>  <span class="c1"># TODO: move somewhere else?</span>
+<span class="kn">from</span> <span class="nn">type_infer.helpers</span> <span class="kn">import</span> <span class="n">is_nan_numeric</span><span class="p">,</span> <span class="n">get_identifier_description_mp</span><span class="p">,</span> <span class="n">cast_string_to_python_type</span><span class="p">,</span> \
+    <span class="n">get_language_dist</span><span class="p">,</span> <span class="n">analyze_sentences</span>
+
+
+<span class="c1"># @TODO: hardcode for distance, time, subunits of currency (e.g. cents) and other common units</span>
+<span class="c1"># @TODO: Add tests with plenty of examples</span>
+<span class="k">def</span> <span class="nf">get_quantity_col_info</span><span class="p">(</span><span class="n">col_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">char_const</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nr_map</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">col_data</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">char_part</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[0-9.,]&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="n">numeric_bit</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[^0-9.,]&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">char_part</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">char_part</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[^0-9]&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">numeric_bit</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">numeric_bit</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">numeric_bit</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">numeric_bit</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">numeric_bit</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">numeric_bit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nr_map</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">numeric_bit</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">char_const</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">char_const</span> <span class="o">=</span> <span class="n">char_part</span>
+
+        <span class="k">if</span> <span class="n">char_part</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">char_part</span> <span class="o">!=</span> <span class="n">char_const</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nr_map</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">nr_map</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">{</span><span class="n">char_const</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;multiplier&#39;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">get_binary_type</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">is_img</span> <span class="o">=</span> <span class="n">imghdr</span><span class="o">.</span><span class="n">what</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">image</span>
+
+        <span class="c1"># @TODO: currently we don differentiate between audio and video</span>
+        <span class="n">is_audio</span> <span class="o">=</span> <span class="n">sndhdr</span><span class="o">.</span><span class="n">what</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+        <span class="c1"># apparently `sndhdr` is really bad..</span>
+        <span class="k">for</span> <span class="n">audio_ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.wav&#39;</span><span class="p">,</span> <span class="s1">&#39;.mp3&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">audio_ext</span><span class="p">):</span>
+                <span class="n">is_audio</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">is_audio</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">audio</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># Not a file or file doesn&#39;t exist</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="get_numeric_type"><a class="viewcode-back" href="../infer.html#infer.get_numeric_type">[docs]</a><span class="k">def</span> <span class="nf">get_numeric_type</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Returns the subtype inferred from a number string, or False if its not a number&quot;&quot;&quot;</span>
+    <span class="n">string_as_nr</span> <span class="o">=</span> <span class="n">cast_string_to_python_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">string_as_nr</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">string_as_nr</span><span class="p">):</span>
+            <span class="n">string_as_nr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">string_as_nr</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_as_nr</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">float</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_as_nr</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">integer</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_nan_numeric</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">integer</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="k">def</span> <span class="nf">type_check_sequence</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">dtype_guess</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+        <span class="n">all_nr</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="n">get_numeric_type</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">element</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">all_nr</span><span class="p">:</span>
+            <span class="n">dtype_guess</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">num_array</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dtype_guess</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">cat_array</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">sep_char</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">]:</span>
+            <span class="n">all_nr</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="s1">&#39;[&#39;</span> <span class="ow">in</span> <span class="n">element</span><span class="p">:</span>
+                <span class="n">ele_arr</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep_char</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ele_arr</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep_char</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">ele_arr</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">get_numeric_type</span><span class="p">(</span><span class="n">ele</span><span class="p">):</span>
+                    <span class="n">all_nr</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ele_arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">all_nr</span><span class="p">:</span>
+                <span class="n">dtype_guess</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">num_array</span>
+
+    <span class="k">return</span> <span class="n">dtype_guess</span>
+
+
+<span class="k">def</span> <span class="nf">type_check_date</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">))</span>
+
+        <span class="c1"># Not accurate 100% for a single datetime str, but should work in aggregate</span>
+        <span class="k">if</span> <span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">dt</span><span class="o">.</span><span class="n">minute</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">dt</span><span class="o">.</span><span class="n">second</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">date</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dtype</span><span class="o">.</span><span class="n">datetime</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">count_data_types_in_column</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">dtype_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="n">type_checkers</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_numeric_type</span><span class="p">,</span>
+                     <span class="n">type_check_sequence</span><span class="p">,</span>
+                     <span class="n">get_binary_type</span><span class="p">,</span>
+                     <span class="n">type_check_date</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">type_checker</span> <span class="ow">in</span> <span class="n">type_checkers</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dtype_guess</span> <span class="o">=</span> <span class="n">type_checker</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">dtype_guess</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">dtype_guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">dtype_counts</span><span class="p">[</span><span class="n">dtype_guess</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dtype_counts</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">invalid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">dtype_counts</span>
+
+
+<div class="viewcode-block" id="get_column_data_type"><a class="viewcode-back" href="../infer.html#infer.get_column_data_type">[docs]</a><span class="k">def</span> <span class="nf">get_column_data_type</span><span class="p">(</span><span class="n">arg_tup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provided the column data, define its data type and data subtype.</span>
+
+<span class="sd">    :param data: an iterable containing a sample of the data frame</span>
+<span class="sd">    :param full_data: an iterable containing the whole column of a data frame</span>
+
+<span class="sd">    :return: type and type distribution, we can later use type_distribution to determine data quality</span>
+<span class="sd">    NOTE: type distribution is the count that this column has for belonging cells to each DATA_TYPE</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">full_data</span><span class="p">,</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">pct_invalid</span> <span class="o">=</span> <span class="n">arg_tup</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Infering type for: </span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">additional_info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;other_potential_dtypes&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="n">warn</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Column </span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1"> has no data in it. &#39;</span><span class="p">)</span>
+        <span class="n">warn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Please remove </span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1"> from the training file or fill in some of the values !&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">additional_info</span><span class="p">,</span> <span class="n">warn</span><span class="p">,</span> <span class="n">info</span>
+
+    <span class="n">dtype_counts</span> <span class="o">=</span> <span class="n">count_data_types_in_column</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">known_dtype_dist</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dtype_counts</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">float</span> <span class="ow">in</span> <span class="n">known_dtype_dist</span> <span class="ow">and</span> <span class="n">dtype</span><span class="o">.</span><span class="n">integer</span> <span class="ow">in</span> <span class="n">known_dtype_dist</span><span class="p">:</span>
+        <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">float</span><span class="p">]</span> <span class="o">+=</span> <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">integer</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">integer</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">datetime</span> <span class="ow">in</span> <span class="n">known_dtype_dist</span> <span class="ow">and</span> <span class="n">dtype</span><span class="o">.</span><span class="n">date</span> <span class="ow">in</span> <span class="n">known_dtype_dist</span><span class="p">:</span>
+        <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">datetime</span><span class="p">]</span> <span class="o">+=</span> <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">date</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">date</span><span class="p">]</span>
+
+    <span class="n">max_known_dtype</span><span class="p">,</span> <span class="n">max_known_dtype_count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="n">known_dtype_dist</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">kv</span><span class="p">:</span> <span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">actual_pct_invalid</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">max_known_dtype_count</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_known_dtype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">max_known_dtype</span> <span class="o">==</span> <span class="n">dtype</span><span class="o">.</span><span class="n">invalid</span><span class="p">:</span>
+        <span class="n">curr_dtype</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">actual_pct_invalid</span> <span class="o">&gt;</span> <span class="n">pct_invalid</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">max_known_dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">integer</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">actual_pct_invalid</span> <span class="o">&lt;=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">pct_invalid</span><span class="p">:</span>
+            <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">max_known_dtype</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">curr_dtype</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">max_known_dtype</span>
+
+    <span class="n">nr_vals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_data</span><span class="p">)</span>
+    <span class="n">nr_distinct_vals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">full_data</span><span class="p">]))</span>
+
+    <span class="c1"># Is it a quantity?</span>
+    <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
+        <span class="n">is_quantity</span><span class="p">,</span> <span class="n">quantitiy_info</span> <span class="o">=</span> <span class="n">get_quantity_col_info</span><span class="p">(</span><span class="n">full_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_quantity</span><span class="p">:</span>
+            <span class="n">additional_info</span><span class="p">[</span><span class="s1">&#39;quantitiy_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantitiy_info</span>
+            <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">quantity</span>
+            <span class="n">known_dtype_dist</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">dtype</span><span class="o">.</span><span class="n">quantity</span><span class="p">:</span> <span class="n">nr_vals</span>
+            <span class="p">}</span>
+
+    <span class="c1"># Check for Tags subtype</span>
+    <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">num_array</span><span class="p">):</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">unique_tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="n">can_be_tags</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">):</span>
+            <span class="n">can_be_tags</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">item_tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)]</span>
+                <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item_tags</span><span class="p">))</span>
+                <span class="n">unique_tokens</span> <span class="o">=</span> <span class="n">unique_tokens</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">item_tags</span><span class="p">))</span>
+
+        <span class="c1"># If more than 30% of the samples contain more than 1 category and there&#39;s more than 6 and less than 30 of them and they are shared between the various cells # noqa</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">can_be_tags</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.3</span> <span class="ow">and</span>
+                <span class="mi">6</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_tokens</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">30</span> <span class="ow">and</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">unique_tokens</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)):</span>
+            <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">tags</span>
+
+    <span class="c1"># Categorical based on unique values</span>
+    <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">tags</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">cat_array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">integer</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">float</span><span class="p">):</span>
+            <span class="n">is_categorical</span> <span class="o">=</span> <span class="n">nr_distinct_vals</span> <span class="o">&lt;</span> <span class="mi">10</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_categorical</span> <span class="o">=</span> <span class="n">nr_distinct_vals</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">((</span><span class="n">nr_vals</span> <span class="o">/</span> <span class="mi">100</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="mi">3000</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_categorical</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">additional_info</span><span class="p">[</span><span class="s1">&#39;other_potential_dtypes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_dtype</span><span class="p">)</span>
+            <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span>
+
+    <span class="c1"># If curr_data_type is still None, then it&#39;s text or category</span>
+    <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Doing text detection for column: </span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">lang_dist</span> <span class="o">=</span> <span class="n">get_language_dist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># Normalize lang probabilities</span>
+        <span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="n">lang_dist</span><span class="p">:</span>
+            <span class="n">lang_dist</span><span class="p">[</span><span class="n">lang</span><span class="p">]</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># If most cells are unknown language then it&#39;s categorical</span>
+        <span class="k">if</span> <span class="n">lang_dist</span><span class="p">[</span><span class="s1">&#39;Unknown&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nr_words</span><span class="p">,</span> <span class="n">word_dist</span><span class="p">,</span> <span class="n">nr_words_dist</span> <span class="o">=</span> <span class="n">analyze_sentences</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">nr_words_dist</span> <span class="ow">and</span> <span class="n">nr_words_dist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">nr_words</span><span class="p">:</span>
+                <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word_dist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">500</span> <span class="ow">and</span> <span class="n">nr_words</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">rich_text</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">short_text</span>
+
+                <span class="k">return</span> <span class="n">curr_dtype</span><span class="p">,</span> <span class="p">{</span><span class="n">curr_dtype</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)},</span> <span class="n">additional_info</span><span class="p">,</span> <span class="n">warn</span><span class="p">,</span> <span class="n">info</span>
+
+    <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">rich_text</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">short_text</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">cat_array</span><span class="p">]:</span>
+        <span class="n">known_dtype_dist</span> <span class="o">=</span> <span class="p">{</span><span class="n">curr_dtype</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
+
+    <span class="k">if</span> <span class="n">nr_distinct_vals</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">curr_dtype</span> <span class="o">==</span> <span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span><span class="p">:</span>
+        <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">binary</span>
+        <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">binary</span><span class="p">]</span> <span class="o">=</span> <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">known_dtype_dist</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">categorical</span><span class="p">]</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Column </span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1"> has data type </span><span class="si">{</span><span class="n">curr_dtype</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">curr_dtype</span><span class="p">,</span> <span class="n">known_dtype_dist</span><span class="p">,</span> <span class="n">additional_info</span><span class="p">,</span> <span class="n">warn</span><span class="p">,</span> <span class="n">info</span></div>
+
+
+<div class="viewcode-block" id="calculate_sample_size"><a class="viewcode-back" href="../infer.html#infer.calculate_sample_size">[docs]</a><span class="k">def</span> <span class="nf">calculate_sample_size</span><span class="p">(</span>
+    <span class="n">population_size</span><span class="p">,</span>
+    <span class="n">margin_error</span><span class="o">=</span><span class="mf">.05</span><span class="p">,</span>
+    <span class="n">confidence_level</span><span class="o">=</span><span class="mf">.99</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the minimal sample size to use to achieve a certain</span>
+<span class="sd">    margin of error and confidence level for a sample estimate</span>
+<span class="sd">    of the population mean.</span>
+<span class="sd">    Inputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    population_size: integer</span>
+<span class="sd">        Total size of the population that the sample is to be drawn from.</span>
+<span class="sd">    margin_error: number</span>
+<span class="sd">        Maximum expected difference between the true population parameter,</span>
+<span class="sd">        such as the mean, and the sample estimate.</span>
+<span class="sd">    confidence_level: number in the interval (0, 1)</span>
+<span class="sd">        If we were to draw a large number of equal-size samples</span>
+<span class="sd">        from the population, the true population parameter</span>
+<span class="sd">        should lie within this percentage</span>
+<span class="sd">        of the intervals (sample_parameter - e, sample_parameter + e)</span>
+<span class="sd">        where e is the margin_error.</span>
+<span class="sd">    sigma: number</span>
+<span class="sd">        The standard deviation of the population.  For the case</span>
+<span class="sd">        of estimating a parameter in the interval [0, 1], sigma=1/2</span>
+<span class="sd">        should be sufficient.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">confidence_level</span><span class="p">)</span>
+    <span class="c1"># dictionary of confidence levels and corresponding z-scores</span>
+    <span class="c1"># computed via norm.ppf(1 - (alpha/2)), where norm is</span>
+    <span class="c1"># a normal distribution object in scipy.stats.</span>
+    <span class="c1"># Here, ppf is the percentile point function.</span>
+    <span class="n">zdict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mf">.90</span><span class="p">:</span> <span class="mf">1.645</span><span class="p">,</span>
+        <span class="mf">.91</span><span class="p">:</span> <span class="mf">1.695</span><span class="p">,</span>
+        <span class="mf">.99</span><span class="p">:</span> <span class="mf">2.576</span><span class="p">,</span>
+        <span class="mf">.97</span><span class="p">:</span> <span class="mf">2.17</span><span class="p">,</span>
+        <span class="mf">.94</span><span class="p">:</span> <span class="mf">1.881</span><span class="p">,</span>
+        <span class="mf">.93</span><span class="p">:</span> <span class="mf">1.812</span><span class="p">,</span>
+        <span class="mf">.95</span><span class="p">:</span> <span class="mf">1.96</span><span class="p">,</span>
+        <span class="mf">.98</span><span class="p">:</span> <span class="mf">2.326</span><span class="p">,</span>
+        <span class="mf">.96</span><span class="p">:</span> <span class="mf">2.054</span><span class="p">,</span>
+        <span class="mf">.92</span><span class="p">:</span> <span class="mf">1.751</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">confidence_level</span> <span class="ow">in</span> <span class="n">zdict</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">zdict</span><span class="p">[</span><span class="n">confidence_level</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Inf fix</span>
+        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">+=</span> <span class="mf">0.001</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">population_size</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">margin_error</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">M</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">((</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denom</span></div>
+
+
+<span class="k">def</span> <span class="nf">sample_data</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="n">population_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">population_size</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="n">sample_size</span> <span class="o">=</span> <span class="n">population_size</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sample_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">calculate_sample_size</span><span class="p">(</span><span class="n">population_size</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.005</span><span class="p">)))</span>
+
+    <span class="n">population_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">input_data_sample_indexes</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">population_size</span><span class="p">),</span> <span class="n">sample_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">input_data_sample_indexes</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">infer_types</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pct_invalid</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">seed_nr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">420</span><span class="p">,</span> <span class="n">mp_cutoff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeInformation</span><span class="p">:</span>
+    <span class="n">seed</span><span class="p">(</span><span class="n">seed_nr</span><span class="p">)</span>
+    <span class="n">type_information</span> <span class="o">=</span> <span class="n">TypeInformation</span><span class="p">()</span>
+    <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">sample_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_df</span><span class="p">)</span>
+    <span class="n">population_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Analyzing a sample of </span><span class="si">{</span><span class="n">sample_size</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;from a total population of </span><span class="si">{</span><span class="n">population_size</span><span class="si">}</span><span class="s1">, this is equivalent to </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">sample_size</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">population_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">% of your data.&#39;</span><span class="p">)</span> <span class="c1"># noqa</span>
+
+    <span class="n">nr_procs</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># TODO: enable parallelism</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">mp_cutoff</span> <span class="ow">and</span> <span class="n">nr_procs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using </span><span class="si">{</span><span class="n">nr_procs</span><span class="si">}</span><span class="s1"> processes to deduct types.&#39;</span><span class="p">)</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nr_procs</span><span class="p">)</span>
+        <span class="c1"># Make type `object` so that dataframe cells can be python lists</span>
+        <span class="n">answer_arr</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_column_data_type</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">sample_df</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">x</span><span class="p">,</span> <span class="n">pct_invalid</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+        <span class="p">])</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">answer_arr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">answer_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_column_data_type</span><span class="p">([</span><span class="n">sample_df</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">x</span><span class="p">,</span> <span class="n">pct_invalid</span><span class="p">]))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">data_dtype</span><span class="p">,</span> <span class="n">data_dtype_dist</span><span class="p">,</span> <span class="n">additional_info</span><span class="p">,</span> <span class="n">warn</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span> <span class="o">=</span> <span class="n">answer_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">warn</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data_dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">invalid</span>
+
+        <span class="n">type_information</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dtype</span>
+        <span class="n">type_information</span><span class="o">.</span><span class="n">additional_info</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;dtype_dist&#39;</span><span class="p">:</span> <span class="n">data_dtype_dist</span>
+        <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">mp_cutoff</span> <span class="ow">and</span> <span class="n">nr_procs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nr_procs</span><span class="p">)</span>
+        <span class="n">answer_arr</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_identifier_description_mp</span><span class="p">,</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">x</span><span class="p">,</span> <span class="n">type_information</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+        <span class="p">])</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">answer_arr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">get_identifier_description_mp</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">x</span><span class="p">,</span> <span class="n">type_information</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">x</span><span class="p">]])</span>
+            <span class="n">answer_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+        <span class="c1"># work with the full data</span>
+        <span class="k">if</span> <span class="n">answer_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Column </span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s1"> is an identifier of type &quot;</span><span class="si">{</span><span class="n">answer_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="n">type_information</span><span class="o">.</span><span class="n">identifiers</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">answer_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># @TODO Column removal logic was here, if the column was an identifier, move it elsewhere</span>
+
+    <span class="k">return</span> <span class="n">type_information</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, MindsDB.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

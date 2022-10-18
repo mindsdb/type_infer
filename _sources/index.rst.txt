@@ -10,13 +10,13 @@ Type Infer
 :Release: |release|
 :Date: |today|
 |
-``type_infer`` is a Python package aimed at automatically inferring the data type for each column in a tabular dataset.
+Welcome to the ``type_infer`` documentation. ``type_infer`` is a Python package aimed at automatically inferring the data type for each column in a tabular dataset.
 
 Quick Guide
 =======================
 - :ref:`Installation <Installation>`
-- :ref:`Example Use Cases <Example Use Cases>`
-- :ref:`Contribute to Lightwood <Contribute to Lightwood>`
+- :ref:`Quick start <Quick start>`
+- :ref:`Contribute <Contributions>`
 
 Installation
 ============
@@ -113,18 +113,6 @@ Contributor Code of Conduct
 Please note that this project is released with a `Contributor Code of Conduct <https://github.com/mindsdb/lightwood/blob/stable/CODE_OF_CONDUCT.md>`_. By participating in this project, you agree to abide by its terms.
 
 
-Current contributors
-=======================
-
-.. raw:: html
-
-    <embed>
-    <a href="https://github.com/mindsdb/lightwood/graphs/contributors">
-      <img src="https://contributors-img.web.app/image?repo=mindsdb/lightwood" />
-    </a>
-    </embed>
-
-
 License
 =======================
 .. raw:: html
@@ -143,4 +131,7 @@ Other Links
 
    philosophy
    tutorials
-   api
+   base
+   dtype
+   infer
+   helpers
