@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Type Infer &mdash; type_infer 0.0.4 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+          
+
+          
+            <a href="#">
+          
+
+          
+            
+            <img src="_static/mindsdblogo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">API</span></code></a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">type_infer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Type Infer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="type-infer">
+<h1>Type Infer<a class="headerlink" href="#type-infer" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Release</dt>
+<dd class="field-odd"><p>0.0.4</p>
+</dd>
+<dt class="field-even">Date</dt>
+<dd class="field-even"><p>Oct 18, 2022</p>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">type_infer</span></code> is a Python package aimed at automatically inferring the data type for each column in a tabular dataset.</p>
+<div class="section" id="quick-guide">
+<h2>Quick Guide<a class="headerlink" href="#quick-guide" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#installation"><span class="std std-ref">Installation</span></a></p></li>
+<li><p><span class="xref std std-ref">Example Use Cases</span></p></li>
+<li><p><span class="xref std std-ref">Contribute to Lightwood</span></p></li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>You can install <code class="docutils literal notranslate"><span class="pre">type_infer</span></code> as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install type_infer
+</pre></div>
+</div>
+<p>We recommend doing the above inside a newly-created python virtual environment.</p>
+<div class="section" id="setting-up-a-dev-environment">
+<h3>Setting up a dev environment<a class="headerlink" href="#setting-up-a-dev-environment" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Clone the repository</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">type_infer</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">requirements.txt</span></code></p></li>
+<li><p>Add it to your python path (e.g. by adding <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">PYTHONPATH='/where/you/cloned/repo':$PYTHONPATH</span></code> as a newline at the end of your <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> file)</p></li>
+<li><p>Check that the unit-tests are passing by going into the directory where you cloned and running: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">discover</span> <span class="pre">tests</span></code></p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">python</span></code> default to python2.x on your environment use <code class="docutils literal notranslate"><span class="pre">python3</span></code> and <code class="docutils literal notranslate"><span class="pre">pip3</span></code> instead</p>
+</div>
+</div>
+</div>
+<div class="section" id="quick-start">
+<h2>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">type_infer</span></code> works with <code class="docutils literal notranslate"><span class="pre">pandas.DataFrames</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">type_infer</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="contributions">
+<h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
+<p>We love to receive contributions from the community and hear your opinions! We want to make contributing as easy as it can be.</p>
+<p>Please continue reading this guide if you are interested.</p>
+<div class="section" id="how-can-you-help-us">
+<h3>How can you help us?<a class="headerlink" href="#how-can-you-help-us" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Report a bug</p></li>
+<li><p>Improve documentation</p></li>
+<li><p>Solve an issue</p></li>
+<li><p>Propose new features</p></li>
+<li><p>Discuss feature implementations</p></li>
+<li><p>Submit a bug fix</p></li>
+<li><p>Test with your own data and let us know how it went!</p></li>
+</ul>
+</div>
+<div class="section" id="code-contributions">
+<h3>Code contributions<a class="headerlink" href="#code-contributions" title="Permalink to this headline">¶</a></h3>
+<p>In general, we follow the <a class="reference external" href="https://docs.github.com/en/github/collaborating-with-pull-requests/getting-started/about-collaborative-development-models#fork-and-pull-model">fork-and-pull</a> git workflow. Here are the steps:</p>
+<ol class="arabic simple">
+<li><p>Fork the repository</p></li>
+<li><p>Checkout the <code class="docutils literal notranslate"><span class="pre">staging</span></code> branch, which is the development version that gets released into <code class="docutils literal notranslate"><span class="pre">stable</span></code> (there can be exceptions, but make sure to ask and confirm with us).</p></li>
+<li><p>Make changes and commit them</p></li>
+<li><p>Make sure that the CI tests pass. You can run the test suite locally with <code class="docutils literal notranslate"><span class="pre">flake8</span> <span class="pre">.</span></code> to check style and <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">discover</span> <span class="pre">tests</span></code> to run the automated tests. This doesn’t guarantee it will pass remotely since we run on multiple envs, but should work in most cases.</p></li>
+<li><p>Push your local branch to your fork</p></li>
+<li><p>Submit a pull request from your repo to the <code class="docutils literal notranslate"><span class="pre">staging</span></code> branch of <code class="docutils literal notranslate"><span class="pre">mindsdb/type_infer</span></code> so that we can review your changes. Be sure to merge the latest from staging before making a pull request!</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You will need to sign a CLI agreement for the code since the repository is under a GPL license.</p>
+</div>
+</div>
+<div class="section" id="feature-and-bug-reports">
+<h3>Feature and Bug reports<a class="headerlink" href="#feature-and-bug-reports" title="Permalink to this headline">¶</a></h3>
+<p>We use GitHub issues to track bugs and features. Report them by opening a <a class="reference external" href="https://github.com/mindsdb/type_infer/issues/new/choose">new issue</a> and fill out all of the required inputs.</p>
+</div>
+<div class="section" id="code-review-process">
+<h3>Code review process<a class="headerlink" href="#code-review-process" title="Permalink to this headline">¶</a></h3>
+<p>Pull request (PR) reviews are done on a regular basis. <strong>If your PR does not address a previous issue, please make an issue first</strong>.</p>
+<p>If your change can affect performance, we will run our private benchmark suite to validate it.</p>
+<p>Please, make sure you respond to our feedback/questions.</p>
+</div>
+<div class="section" id="community">
+<h3>Community<a class="headerlink" href="#community" title="Permalink to this headline">¶</a></h3>
+<p>If you have additional questions or you want to chat with MindsDB core team, you can join our community:</p>
+<embed>
+<a href="https://join.slack.com/t/mindsdbcommunity/shared_invite/zt-o8mrmx3l-5ai~5H66s6wlxFfBMVI6wQ" target="_blank"><img src="https://img.shields.io/badge/slack-@mindsdbcommunity-blueviolet.svg?logo=slack " alt="MindsDB Community"></a>
+</embed><p>To get updates on MindsDB’s latest announcements, releases, and events, sign up for our <a class="reference external" href="https://mindsdb.com/newsletter/?utm_medium=community&amp;utm_source=github&amp;utm_campaign=lightwood%20repo">Monthly Community Newsletter</a>.</p>
+<p>Join our mission of democratizing machine learning and allowing developers to become data scientists!</p>
+</div>
+<div class="section" id="contributor-code-of-conduct">
+<h3>Contributor Code of Conduct<a class="headerlink" href="#contributor-code-of-conduct" title="Permalink to this headline">¶</a></h3>
+<p>Please note that this project is released with a <a class="reference external" href="https://github.com/mindsdb/lightwood/blob/stable/CODE_OF_CONDUCT.md">Contributor Code of Conduct</a>. By participating in this project, you agree to abide by its terms.</p>
+</div>
+</div>
+<div class="section" id="current-contributors">
+<h2>Current contributors<a class="headerlink" href="#current-contributors" title="Permalink to this headline">¶</a></h2>
+<embed>
+<a href="https://github.com/mindsdb/lightwood/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=mindsdb/lightwood" />
+</a>
+</embed></div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<embed>
+<img src="https://img.shields.io/pypi/l/lightwood" alt="PyPI - License">
+</embed><div class="line-block">
+<div class="line"><a class="reference external" href="https://github.com/mindsdb/type_infer/blob/stable/LICENSE">License</a></div>
+</div>
+</div>
+<div class="section" id="other-links">
+<h2>Other Links<a class="headerlink" href="#other-links" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">API</span></code></a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, MindsDB.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
