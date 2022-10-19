@@ -1,4 +1,4 @@
-name: Integration and Unit Tests Type Infer
+name: Type Infer Tests Workflow
 
 on:
   push:
@@ -6,7 +6,9 @@ on:
     branches:
       - stable
       - staging
-
+    paths-ignore:
+      - 'docssrc/**'
+      - 'README.md'
 
 jobs:
   test:
