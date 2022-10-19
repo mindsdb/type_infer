@@ -8,7 +8,7 @@ on:
       - staging
     paths-ignore:
       - 'docssrc/**'
-      - 'README.md'
+      - '**.md'
 
 jobs:
   test:
