@@ -365,6 +365,23 @@ def sample_data(df: pd.DataFrame):
 
 
 def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_cutoff: int = 1e4) -> TypeInformation:
+    """
+    Infers the data types of each column of the dataset by analyzing a small sample of
+    each column's items.
+
+    Inputs
+    ----------
+    data : pd.DataFrame
+        The input dataset for which we want to infer data type information.
+    pct_invalid : float
+        The percentage, i.e. a float between 0.0 and 100.0, of invalid values that are
+        accepted before failing the type inference for a column.
+    seed_nr : int, optional
+        Seed for the random number generator, by default 420
+    mp_cutoff : int, optional
+        How many elements in the dataframe before switching to parallel processing, by
+        default 1e4.
+    """
     seed(seed_nr)
     type_information = TypeInformation()
     sample_df = sample_data(data)
