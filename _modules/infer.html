@@ -532,7 +532,24 @@
     <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">input_data_sample_indexes</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">infer_types</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pct_invalid</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">seed_nr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">420</span><span class="p">,</span> <span class="n">mp_cutoff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeInformation</span><span class="p">:</span>
+<div class="viewcode-block" id="infer_types"><a class="viewcode-back" href="../infer.html#infer.infer_types">[docs]</a><span class="k">def</span> <span class="nf">infer_types</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pct_invalid</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">seed_nr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">420</span><span class="p">,</span> <span class="n">mp_cutoff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeInformation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Infers the data types of each column of the dataset by analyzing a small sample of</span>
+<span class="sd">    each column&#39;s items.</span>
+
+<span class="sd">    Inputs</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : pd.DataFrame</span>
+<span class="sd">        The input dataset for which we want to infer data type information.</span>
+<span class="sd">    pct_invalid : float</span>
+<span class="sd">        The percentage, i.e. a float between 0.0 and 100.0, of invalid values that are</span>
+<span class="sd">        accepted before failing the type inference for a column.</span>
+<span class="sd">    seed_nr : int, optional</span>
+<span class="sd">        Seed for the random number generator, by default 420</span>
+<span class="sd">    mp_cutoff : int, optional</span>
+<span class="sd">        How many elements in the dataframe before switching to parallel processing, by</span>
+<span class="sd">        default 1e4.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">seed</span><span class="p">(</span><span class="n">seed_nr</span><span class="p">)</span>
     <span class="n">type_information</span> <span class="o">=</span> <span class="n">TypeInformation</span><span class="p">()</span>
     <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -595,7 +612,7 @@
 
         <span class="c1"># @TODO Column removal logic was here, if the column was an identifier, move it elsewhere</span>
 
-    <span class="k">return</span> <span class="n">type_information</span>
+    <span class="k">return</span> <span class="n">type_information</span></div>
 </pre></div>
 
            </div>

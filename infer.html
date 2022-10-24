@@ -104,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#infer.calculate_sample_size">calculate_sample_size</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#infer.get_column_data_type">get_column_data_type</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#infer.get_numeric_type">get_numeric_type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#infer.infer_types">infer_types</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="helpers.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Helpers</span></code></a></li>
@@ -255,6 +256,30 @@ should be sufficient.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="infer.infer_types">
+<span class="sig-prename descclassname"><span class="pre">infer.</span></span><span class="sig-name descname"><span class="pre">infer_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pct_invalid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_nr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">420</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/infer.html#infer_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#infer.infer_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infers the data types of each column of the dataset by analyzing a small sample of
+each column’s items.</p>
+<dl class="simple">
+<dt>data<span class="classifier">pd.DataFrame</span></dt><dd><p>The input dataset for which we want to infer data type information.</p>
+</dd>
+<dt>pct_invalid<span class="classifier">float</span></dt><dd><p>The percentage, i.e. a float between 0.0 and 100.0, of invalid values that are
+accepted before failing the type inference for a column.</p>
+</dd>
+<dt>seed_nr<span class="classifier">int, optional</span></dt><dd><p>Seed for the random number generator, by default 420</p>
+</dd>
+<dt>mp_cutoff<span class="classifier">int, optional</span></dt><dd><p>How many elements in the dataframe before switching to parallel processing, by
+default 1e4.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeInformation</span></code></p>
 </dd>
 </dl>
 </dd></dl>

@@ -177,7 +177,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For a dataset, provides information on columns types, how they&#39;re used, and any other potential identifiers.</span>
 
-<span class="sd">    TypeInformation is generated within ``data.infer_types``, where small samples of each column are evaluated in a custom framework to understand what kind of data type the model is. The user may override data types, but it is recommended to do so within a JSON-AI config file.</span>
+<span class="sd">    ``TypeInformation`` is generated within :py:func:`infer.infer_types`, where small samples of each column are evaluated in a custom framework to understand what kind of data type the model is. The user may override data types, but it is recommended to do so within a JSON-AI config file.</span>
 
 <span class="sd">    :param dtypes: For each column&#39;s name, the associated data type inferred.</span>
 <span class="sd">    :param additional_info: Any possible sub-categories or additional descriptive information.</span>
