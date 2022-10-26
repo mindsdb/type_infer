@@ -26,3 +26,6 @@
   
 </div>
 Automated type inference for Machine Learning pipelines.
+
+# Documentation
+<a href="https://mindsdb.github.io/type_infer">Documentation link</a>
