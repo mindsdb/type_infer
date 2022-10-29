@@ -5,9 +5,9 @@ from type_infer import helpers
 
 class TestCastStringToPythonType(unittest.TestCase):
     def test_numeric_unicode_is_none(self):
-        numeric_unicode = '\u00BC'
-        self.assertTrue(numeric_unicode.isnumeric())
-        self.assertIsNone(helpers.cast_string_to_python_type(numeric_unicode))
+        numeric_unicode_str = '\u00BC'
+        self.assertTrue(numeric_unicode_str.isnumeric())
+        self.assertIsNone(helpers.cast_string_to_python_type(numeric_unicode_str))
 
     def test_str_is_none(self):
         self.assertIsNone(helpers.cast_string_to_python_type(''))
@@ -25,8 +25,10 @@ class TestCastStringToPythonType(unittest.TestCase):
 
 
 class TestIsNanNumeric(unittest.TestCase):
-    def test_numeric_unicode_is_none(self):
-        self.assertTrue(helpers.is_nan_numeric('inf'))
+    def test_nan_is_numeric(self):
         self.assertTrue(helpers.is_nan_numeric('nan'))
-        self.assertTrue(helpers.is_nan_numeric(float('inf')))
         self.assertTrue(helpers.is_nan_numeric(float('nan')))
+
+    def test_inf_is_numeric(self):
+        self.assertTrue(helpers.is_nan_numeric('inf'))
+        self.assertTrue(helpers.is_nan_numeric(float('inf')))
