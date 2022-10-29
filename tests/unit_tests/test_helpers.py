@@ -22,3 +22,11 @@ class TestCastStringToPythonType(unittest.TestCase):
         self.assertEqual(helpers.cast_string_to_python_type('1,1'), 1.1)
         self.assertEqual(helpers.cast_string_to_python_type('1.'), 1.0)
         self.assertEqual(helpers.cast_string_to_python_type('inf'), float('inf'))
+
+
+class TestIsNanNumeric(unittest.TestCase):
+    def test_numeric_unicode_is_none(self):
+        self.assertTrue(helpers.is_nan_numeric('inf'))
+        self.assertTrue(helpers.is_nan_numeric('nan'))
+        self.assertTrue(helpers.is_nan_numeric(float('inf')))
+        self.assertTrue(helpers.is_nan_numeric(float('nan')))
