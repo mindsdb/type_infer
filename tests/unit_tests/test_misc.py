@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 
 import type_infer
+from type_infer.helpers import tokenize_text
 
 
 class TestDates(unittest.TestCase):
@@ -18,3 +19,10 @@ class TestDates(unittest.TestCase):
         package_init_version = type_infer.__version__
 
         self.assertEqual(package_init_version, pyproject_version)
+
+    def test_get_tokens(self):
+        sentences = ['hello, world!', ' !hello! world!!,..#', '#hello!world']
+        for sent in sentences:
+            assert tokenize_text(sent) == ['hello', 'world']
+
+        assert tokenize_text("don't wouldn't") == ['do', 'not', 'would', 'not']

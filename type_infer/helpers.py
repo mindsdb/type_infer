@@ -221,6 +221,7 @@ def analyze_sentences(data):
     return nr_words, dict(word_dist), dict(nr_words_dist)
 
 
+# @TODO: eventually move these into .helpers.text
 def tokenize_text(text):
     return [t.lower() for t in nltk.word_tokenize(decontracted(text)) if contains_alnum(t)]
 
