@@ -32,7 +32,7 @@ We recommend doing the above inside a newly-created python virtual environment.
 Setting up a dev environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - Clone the repository
-- Run ``cd type_infer && pip install requirements.txt``
+- Run ``cd type_infer && pip install --editable .``
 - Add it to your python path (e.g. by adding ``export PYTHONPATH='/where/you/cloned/repo':$PYTHONPATH`` as a newline at the end of your ``~/.bashrc`` file)
 - Check that the unit-tests are passing by going into the directory where you cloned and running: ``python -m unittest discover tests``
 
