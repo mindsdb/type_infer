@@ -44,7 +44,7 @@ def get_quantity_col_info(col_data: List[object]) -> str:
         if char_const is None:
             char_const = char_part
 
-        if char_part is None or char_part != char_const:
+        if char_part is None or char_part == '-' or char_part != char_const:
             return False, None
 
     if len(nr_map) > 20 and len(nr_map) > len(col_data) / 200:
