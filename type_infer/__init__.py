@@ -5,7 +5,6 @@ from type_infer import helpers
 
 
 __version__ = '0.0.9'
-__name__ = "type_infer"
 
 
-__all__ = ['base', 'dtype', 'infer', 'helpers', '__version__', '__name__']
+__all__ = ['base', 'dtype', 'infer', 'helpers', '__version__']
