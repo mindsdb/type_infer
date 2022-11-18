@@ -101,7 +101,10 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
         for i, _ in enumerate(str_data[0]):
             N = len(set(x[i] for x in str_data))
             S = st.entropy([*Counter(x[i] for x in str_data).values()])
-            randomness_per_index.append(S / np.log(N))
+            if S == 0:
+                randomness_per_index.append(0.0)
+            else:
+                randomness_per_index.append(S / np.log(N))
 
         if np.mean(randomness_per_index) > 0.95:
             return 'Hash-like identifier'
