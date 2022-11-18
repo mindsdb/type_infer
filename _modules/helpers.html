@@ -392,6 +392,7 @@
     <span class="k">return</span> <span class="n">nr_words</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">word_dist</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nr_words_dist</span><span class="p">)</span>
 
 
+<span class="c1"># @TODO: eventually move these into .helpers.text</span>
 <span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">decontracted</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="k">if</span> <span class="n">contains_alnum</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
 
