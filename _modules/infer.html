@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>infer &mdash; type_infer 0.0.7 documentation</title>
+  <title>infer &mdash; type_infer 0.0.9 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                0.0.7
+                0.0.9
               </div>
             
           
@@ -212,7 +212,7 @@
         <span class="k">if</span> <span class="n">char_const</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">char_const</span> <span class="o">=</span> <span class="n">char_part</span>
 
-        <span class="k">if</span> <span class="n">char_part</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">char_part</span> <span class="o">!=</span> <span class="n">char_const</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">char_part</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">char_part</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span> <span class="ow">or</span> <span class="n">char_part</span> <span class="o">!=</span> <span class="n">char_const</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nr_map</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">nr_map</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">200</span><span class="p">:</span>
