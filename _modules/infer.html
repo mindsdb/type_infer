@@ -243,7 +243,7 @@
 
 
 <div class="viewcode-block" id="get_numeric_type"><a class="viewcode-back" href="../infer.html#infer.get_numeric_type">[docs]</a><span class="k">def</span> <span class="nf">get_numeric_type</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Returns the subtype inferred from a number string, or False if its not a number&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns the subtype inferred from a number string, or False if its not a number&quot;&quot;&quot;</span>
     <span class="n">string_as_nr</span> <span class="o">=</span> <span class="n">cast_string_to_python_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">))</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -332,7 +332,7 @@
 
 
 <div class="viewcode-block" id="get_column_data_type"><a class="viewcode-back" href="../infer.html#infer.get_column_data_type">[docs]</a><span class="k">def</span> <span class="nf">get_column_data_type</span><span class="p">(</span><span class="n">arg_tup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Provided the column data, define its data type and data subtype.</span>
 
 <span class="sd">    :param data: an iterable containing a sample of the data frame</span>
@@ -467,7 +467,7 @@
     <span class="n">confidence_level</span><span class="o">=</span><span class="mf">.99</span><span class="p">,</span>
     <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the minimal sample size to use to achieve a certain</span>
 <span class="sd">    margin of error and confidence level for a sample estimate</span>
 <span class="sd">    of the population mean.</span>
@@ -533,7 +533,7 @@
 
 
 <div class="viewcode-block" id="infer_types"><a class="viewcode-back" href="../infer.html#infer.infer_types">[docs]</a><span class="k">def</span> <span class="nf">infer_types</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pct_invalid</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">seed_nr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">420</span><span class="p">,</span> <span class="n">mp_cutoff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeInformation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Infers the data types of each column of the dataset by analyzing a small sample of</span>
 <span class="sd">    each column&#39;s items.</span>
 
@@ -557,7 +557,7 @@
     <span class="n">population_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Analyzing a sample of </span><span class="si">{</span><span class="n">sample_size</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s1">&#39;from a total population of </span><span class="si">{</span><span class="n">population_size</span><span class="si">}</span><span class="s1">, this is equivalent to </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">sample_size</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">population_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">% of your data.&#39;</span><span class="p">)</span> <span class="c1"># noqa</span>
+        <span class="sa">f</span><span class="s1">&#39;from a total population of </span><span class="si">{</span><span class="n">population_size</span><span class="si">}</span><span class="s1">, this is equivalent to </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">sample_size</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">population_size</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">% of your data.&#39;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
     <span class="n">nr_procs</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># TODO: enable parallelism</span>
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">mp_cutoff</span> <span class="ow">and</span> <span class="n">nr_procs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
