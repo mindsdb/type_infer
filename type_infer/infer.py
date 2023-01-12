@@ -234,7 +234,7 @@ def get_column_data_type(arg_tup):
             can_be_tags = True
             delimiter = ','
             for item in data:
-                item_tags = [t.strip() for t in item.split(delimiter)]
+                item_tags = [t.strip() for t in item.split(delimiter) if t != '']
                 lengths.append(len(item_tags))
                 unique_tokens = unique_tokens.union(set(item_tags))
 
