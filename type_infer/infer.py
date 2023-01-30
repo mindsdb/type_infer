@@ -56,6 +56,10 @@ def get_quantity_col_info(col_data: List[object]) -> str:
 
 
 def get_binary_type(element: object) -> str:
+    """
+    Returns data type of the object, if the object is determined to be an image, audio. None if the object isn't a binary file
+    or if the file doesn't exist.
+    """
     try:
         is_img = imghdr.what(element)
         if is_img is not None:
@@ -99,6 +103,10 @@ def get_numeric_type(element: object) -> str:
 
 
 def type_check_sequence(element: object) -> str:
+    """
+    Returns 'num_array' if the object is a list or string of numerical values, 'cat_array' if the object is a list of
+    non-numerical values, or None if it is not a list/array.
+    """
     dtype_guess = None
 
     if isinstance(element, List):
@@ -127,6 +135,11 @@ def type_check_sequence(element: object) -> str:
 
 
 def type_check_date(element: object) -> str:
+    """
+    Returns 'date' if the object is a date string or 'datetime' if the object is a datetime string, or None
+    if it is not a date/datetime string.
+    """
+
     try:
         dt = dateutil.parser.parse(str(element))
 
@@ -141,6 +154,10 @@ def type_check_date(element: object) -> str:
 
 
 def count_data_types_in_column(data):
+    """
+    Count the number of instances of each data type in a column of data and returns a dictionary mapping data type names
+    to their count in the input data.
+    """
     dtype_counts = Counter()
 
     type_checkers = [get_numeric_type,
@@ -303,6 +320,7 @@ def calculate_sample_size(
     Calculate the minimal sample size to use to achieve a certain
     margin of error and confidence level for a sample estimate
     of the population mean.
+
     Inputs
     -------
     population_size: integer
@@ -353,6 +371,14 @@ def calculate_sample_size(
 
 
 def sample_data(df: pd.DataFrame):
+    """
+    Extract a random sample from a Pandas DataFrame.
+
+    Inputs
+    ----------
+    df : pd.DataFrame
+        The input DataFrame from which the sample will be taken.
+    """
     population_size = len(df)
     if population_size <= 50:
         sample_size = population_size

@@ -29,6 +29,9 @@ except LookupError:
 
 
 def seed(seed_nr: int) -> None:
+    """
+    Set the seed for random number generators in NumPy and Python's random module.
+    """
     np.random.seed(seed_nr)
     random.seed(seed_nr)
 
@@ -54,6 +57,9 @@ def is_nan_numeric(value: object) -> bool:
 
 
 def initialize_log():
+    """
+    Returns the Logger object for the current process.
+    """
     pid = os.getpid()
 
     handler = colorlog.StreamHandler()
@@ -70,11 +76,26 @@ log = initialize_log()
 
 
 def get_identifier_description_mp(arg_tup):
+    """
+    Returns the type of identifier, one of 'No Information', 'Hash-like identifier', 'Foreign key', 'UUID', 'Unknown identifier', or None.
+
+    Inputs:
+    - arg_tup (tuple): A tuple of (data, column_name, data_dtype)
+    """
     data, column_name, data_dtype = arg_tup
     return get_identifier_description(data, column_name, data_dtype)
 
 
 def get_identifier_description(data: Iterable, column_name: str, data_dtype: dtype):
+    """
+    Determine the type of identifier and returns one of 'No Information', 'Hash-like identifier', 'Foreign key', 'UUID',
+    'Unknown identifier', or None based on the data, column name and data type.
+
+    Inputs:
+    - data (Iterable): An iterable object containing the data.
+    - column_name (str): The name of the column.
+    - data_dtype (dtype): The data type of the column.
+    """
     data = list(data)
     if isinstance(data[0], list):
         nr_unique = len(set(tuple(x) for x in data))
@@ -130,6 +151,9 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
 
 
 def _is_foreign_key_name(name):
+    """
+    Returns True if `name` is a potential foreign key name, False otherwise.
+    """
     for endings in ['id', 'ID', 'Id']:
         for add in ['-', '_', ' ']:
             if name.endswith(add + endings):
@@ -141,6 +165,9 @@ def _is_foreign_key_name(name):
 
 
 def _is_identifier_name(name):
+    """
+    Returns True if `name` is a potential identifier name, False otherwise.
+    """
     for keyword in ['account', 'uuid', 'identifier', 'user']:
         if keyword in name:
             return True
@@ -167,6 +194,10 @@ def cast_string_to_python_type(string):
 
 # TODO: Should this be here?
 def clean_float(val):
+    """
+    Converts a value to float if possible, otherwise returns None.
+    """
+
     if isinstance(val, (int, float)):
         return float(val)
 
@@ -184,6 +215,9 @@ def clean_float(val):
 
 
 def get_language_dist(data):
+    """
+    Returns a dictionary of language distributions with languages as keys and the count of texts in that language as values from a list of text data.
+    """
     lang_dist = defaultdict(lambda: 0)
     lang_dist['Unknown'] = 0
     lang_probs_cache = dict()
@@ -208,6 +242,9 @@ def get_language_dist(data):
 
 
 def analyze_sentences(data):
+    """
+    Analyze a list of sentences and returns total number of words, word frequency distribution, and sentence length frequency distribution.
+    """
     nr_words = 0
     word_dist = defaultdict(int)
     nr_words_dist = defaultdict(int)
@@ -226,10 +263,16 @@ def analyze_sentences(data):
 
 # @TODO: eventually move these into .helpers.text
 def tokenize_text(text):
+    """
+    Returns a list of pre-processed and tokenized words by lowercasing, removing contractions and non-alphanumeric characters.
+    """
     return [t.lower() for t in nltk.word_tokenize(decontracted(text)) if contains_alnum(t)]
 
 
 def decontracted(phrase):
+    """
+    Replaces contracted forms of words in the given string with their expanded forms.
+    """
     # specific
     phrase = re.sub(r"won\'t", "will not", phrase)
     phrase = re.sub(r"can\'t", "can not", phrase)
@@ -247,6 +290,9 @@ def decontracted(phrase):
 
 
 def contains_alnum(text):
+    """
+    The function takes in a string and checks if any of its characters are alphanumeric, returning True if found and False if not.
+    """
     for c in text:
         if c.isalnum():
             return True
