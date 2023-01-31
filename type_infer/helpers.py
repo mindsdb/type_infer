@@ -291,7 +291,7 @@ def decontracted(phrase):
 
 def contains_alnum(text):
     """
-    The function takes in a string and checks if any of its characters are alphanumeric, returning True if found and False if not.
+    Check and return whether any of the input string characters are alphanumeric.
     """
     for c in text:
         if c.isalnum():
