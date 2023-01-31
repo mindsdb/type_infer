@@ -59,7 +59,7 @@ def get_binary_type(element: object) -> str:
     """
     Returns data type of the object, if the object is determined to be an image, audio. None if the object isn't a binary file
     or if the file doesn't exist.
-    """
+    """ # noqa
     try:
         is_img = imghdr.what(element)
         if is_img is not None:
@@ -79,7 +79,7 @@ def get_binary_type(element: object) -> str:
 
 
 def get_numeric_type(element: object) -> str:
-    """ Returns the subtype inferred from a number string, or False if its not a number"""
+    """ Returns the subtype inferred from a number string, or False if its not a number""" # noqa
     string_as_nr = cast_string_to_python_type(str(element))
 
     try:
@@ -106,7 +106,7 @@ def type_check_sequence(element: object) -> str:
     """
     Returns 'num_array' if the object is a list or string of numerical values, 'cat_array' if the object is a list of
     non-numerical values, or None if it is not a list/array.
-    """
+    """ # noqa
     dtype_guess = None
 
     if isinstance(element, List):
@@ -138,7 +138,7 @@ def type_check_date(element: object) -> str:
     """
     Returns 'date' if the object is a date string or 'datetime' if the object is a datetime string, or None
     if it is not a date/datetime string.
-    """
+    """ # noqa
 
     try:
         dt = dateutil.parser.parse(str(element))
@@ -157,7 +157,7 @@ def count_data_types_in_column(data):
     """
     Count the number of instances of each data type in a column of data and returns a dictionary mapping data type names
     to their count in the input data.
-    """
+    """ # noqa
     dtype_counts = Counter()
 
     type_checkers = [get_numeric_type,
@@ -189,7 +189,7 @@ def get_column_data_type(arg_tup):
 
     :return: type and type distribution, we can later use type_distribution to determine data quality
     NOTE: type distribution is the count that this column has for belonging cells to each DATA_TYPE
-    """
+    """ # noqa
     data, full_data, col_name, pct_invalid = arg_tup
     log.info(f'Infering type for: {col_name}')
     additional_info = {'other_potential_dtypes': []}
@@ -338,7 +338,7 @@ def calculate_sample_size(
         The standard deviation of the population.  For the case
         of estimating a parameter in the interval [0, 1], sigma=1/2
         should be sufficient.
-    """
+    """ # noqa
     alpha = 1 - (confidence_level)
     # dictionary of confidence levels and corresponding z-scores
     # computed via norm.ppf(1 - (alpha/2)), where norm is
@@ -378,7 +378,7 @@ def sample_data(df: pd.DataFrame):
     ----------
     df : pd.DataFrame
         The input DataFrame from which the sample will be taken.
-    """
+    """ # noqa
     population_size = len(df)
     if population_size <= 50:
         sample_size = population_size
@@ -407,7 +407,7 @@ def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_c
     mp_cutoff : int, optional
         How many elements in the dataframe before switching to parallel processing, by
         default 1e4.
-    """
+    """ # noqa
     seed(seed_nr)
     type_information = TypeInformation()
     sample_df = sample_data(data)
