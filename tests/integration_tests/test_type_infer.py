@@ -33,14 +33,14 @@ class TestTypeInference(unittest.TestCase):
         }
         expected_ids = {
             'tweet_id': 'Foreign key',
-            'name': 'Unknown identifier'
+            'name': 'Unknown identifier',
+            'negativereason_gold': 'No Information',
         }
         self.assertEqual(expected_types, inferred_types.dtypes)
         self.assertEqual(expected_ids, inferred_types.identifiers)
 
     def test_1_stack_overflow_survey(self):
         df = pl.read_csv("tests/data/stack_overflow_survey_sample.csv")
-        inferred_types = infer_types(df, pct_invalid=0)
 
         expected_types = {
             'Respondent': 'integer',
@@ -64,6 +64,8 @@ class TestTypeInference(unittest.TestCase):
         expected_ids = {
             'Professional': 'No Information'
         }
+
+        inferred_types = infer_types(df, pct_invalid=0)
 
         for col in expected_types:
             self.assertTrue(expected_types[col], inferred_types.dtypes[col])
