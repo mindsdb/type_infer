@@ -1,12 +1,12 @@
 import unittest
-import pandas as pd
+import polars as pl
 
 from type_infer.infer import infer_types
 
 
 class TestTypeInference(unittest.TestCase):
     def test_0_airline_sentiment(self):
-        df = pd.read_csv("tests/data/airline_sentiment_sample.csv")
+        df = pl.read_csv("tests/data/airline_sentiment_sample.csv")
         inferred_types = infer_types(df, pct_invalid=0)
 
         expected_types = {
@@ -39,7 +39,7 @@ class TestTypeInference(unittest.TestCase):
         self.assertEqual(expected_ids, inferred_types.identifiers)
 
     def test_1_stack_overflow_survey(self):
-        df = pd.read_csv("tests/data/stack_overflow_survey_sample.csv")
+        df = pl.read_csv("tests/data/stack_overflow_survey_sample.csv")
         inferred_types = infer_types(df, pct_invalid=0)
 
         expected_types = {

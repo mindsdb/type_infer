@@ -2,13 +2,13 @@ import re
 import random
 import imghdr
 import sndhdr
-import dateutil
 import multiprocessing as mp
 from collections import Counter
 from typing import List
 
 from scipy.stats import norm
-import pandas as pd
+from dateutil.parser import parse
+import polars as pl
 import numpy as np
 
 from type_infer.base import TypeInformation
@@ -128,7 +128,7 @@ def type_check_sequence(element: object) -> str:
 
 def type_check_date(element: object) -> str:
     try:
-        dt = dateutil.parser.parse(str(element))
+        dt = parse(str(element))
 
         # Not accurate 100% for a single datetime str, but should work in aggregate
         if dt.hour == 0 and dt.minute == 0 and dt.second == 0 and len(str(element)) <= 16:
@@ -352,7 +352,7 @@ def calculate_sample_size(
     return numerator / denom
 
 
-def sample_data(df: pd.DataFrame):
+def sample_data(df: pl.DataFrame):
     population_size = len(df)
     if population_size <= 50:
         sample_size = population_size
@@ -361,17 +361,17 @@ def sample_data(df: pd.DataFrame):
 
     population_size = len(df)
     input_data_sample_indexes = random.sample(range(population_size), sample_size)
-    return df.iloc[input_data_sample_indexes]
+    return df[input_data_sample_indexes]
 
 
-def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_cutoff: int = 1e4) -> TypeInformation:
+def infer_types(data: pl.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_cutoff: int = 1e4) -> TypeInformation:
     """
     Infers the data types of each column of the dataset by analyzing a small sample of
     each column's items.
 
     Inputs
     ----------
-    data : pd.DataFrame
+    data : pl.DataFrame
         The input dataset for which we want to infer data type information.
     pct_invalid : float
         The percentage, i.e. a float between 0.0 and 100.0, of invalid values that are
@@ -392,21 +392,21 @@ def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_c
         f'from a total population of {population_size}, this is equivalent to {round(sample_size*100/population_size, 1)}% of your data.') # noqa
 
     nr_procs = 1  # TODO: enable parallelism
-    if data.size > mp_cutoff and nr_procs > 1:
+    if data.estimated_size() > mp_cutoff and nr_procs > 1:
         log.info(f'Using {nr_procs} processes to deduct types.')
         pool = mp.Pool(processes=nr_procs)
         # Make type `object` so that dataframe cells can be python lists
         answer_arr = pool.map(get_column_data_type, [
-            (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns.values
+            (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns
         ])
         pool.close()
         pool.join()
     else:
         answer_arr = []
-        for x in sample_df.columns.values:
+        for x in sample_df.columns:
             answer_arr.append(get_column_data_type([sample_df[x].dropna(), data[x], x, pct_invalid]))
 
-    for i, col_name in enumerate(sample_df.columns.values):
+    for i, col_name in enumerate(sample_df.columns):
         (data_dtype, data_dtype_dist, additional_info, warn, info) = answer_arr[i]
 
         for msg in warn:
@@ -422,21 +422,21 @@ def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_c
             'dtype_dist': data_dtype_dist
         }
 
-    if data.size > mp_cutoff and nr_procs > 1:
+    if data.estimated_size() > mp_cutoff and nr_procs > 1:
         pool = mp.Pool(processes=nr_procs)
         answer_arr = pool.map(get_identifier_description_mp, [
             (data[x], x, type_information.dtypes[x])
-            for x in sample_df.columns.values
+            for x in sample_df.columns
         ])
         pool.close()
         pool.join()
     else:
         answer_arr = []
-        for x in sample_df.columns.values:
+        for x in sample_df.columns:
             answer = get_identifier_description_mp([data[x], x, type_information.dtypes[x]])
             answer_arr.append(answer)
 
-    for i, col_name in enumerate(sample_df.columns.values):
+    for i, col_name in enumerate(sample_df.columns):
         # work with the full data
         if answer_arr[i] is not None:
             log.warning(f'Column {col_name} is an identifier of type "{answer_arr[i]}"')
