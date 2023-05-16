@@ -109,7 +109,7 @@ def type_check_sequence(element: object) -> str:
         else:
             dtype_guess = dtype.cat_array
     else:
-        for sep_char in [',', '\t', '|', ' ']:
+        for sep_char in [',', '\t', '|', ' ']:  # @TODO: potential bottleneck, cutoff after a while
             all_nr = True
             if '[' in element:
                 ele_arr = element.rstrip(']').lstrip('[').split(sep_char)
@@ -234,10 +234,9 @@ def get_column_data_type(arg_tup):
         if all(isinstance(x, str) for x in data):
             can_be_tags = True
             delimiter = ','
-            for item in data:
-                item_tags = [t.strip() for t in item.split(delimiter)]
-                lengths.append(len(item_tags))
-                unique_tokens = unique_tokens.union(set(item_tags))
+            split = data.apply(lambda x: [t.strip() for t in x.split(',')])
+            lengths2 = [len(x) for x in split]
+            unique_tokens2 = set([x for y in split for x in y])
 
         # If more than 30% of the samples contain more than 1 category and there's more than 6 and less than 30 of them and they are shared between the various cells # noqa
         if (can_be_tags and np.mean(lengths) > 1.3 and
@@ -260,7 +259,7 @@ def get_column_data_type(arg_tup):
     # If curr_data_type is still None, then it's text or category
     if curr_dtype is None:
         log.info(f'Doing text detection for column: {col_name}')
-        lang_dist = get_language_dist(data)
+        lang_dist = get_language_dist(data)  # TODO: bottleneck, pass entire corpus at once?
 
         # Normalize lang probabilities
         for lang in lang_dist:
@@ -270,7 +269,7 @@ def get_column_data_type(arg_tup):
         if lang_dist['Unknown'] > 0.5:
             curr_dtype = dtype.categorical
         else:
-            nr_words, word_dist, nr_words_dist = analyze_sentences(data)
+            nr_words, word_dist, nr_words_dist = analyze_sentences(data)  # TODO: bottleneck pass entire corpus at once?
 
             if 1 in nr_words_dist and nr_words_dist[1] == nr_words:
                 curr_dtype = dtype.categorical
