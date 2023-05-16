@@ -14,6 +14,7 @@ import numpy as np
 from type_infer.base import TypeInformation
 from type_infer.dtype import dtype
 from type_infer.helpers import seed, log  # TODO: move somewhere else?
+from type_infer.helpers import get_nr_procs
 from type_infer.helpers import is_nan_numeric, get_identifier_description_mp, cast_string_to_python_type, \
     get_language_dist, analyze_sentences
 
@@ -295,8 +296,8 @@ def get_column_data_type(arg_tup):
 
 def calculate_sample_size(
     population_size,
-    margin_error=.05,
-    confidence_level=.99,
+    margin_error=.01,
+    confidence_level=.995,
     sigma=1 / 2
 ):
     """
@@ -352,19 +353,24 @@ def calculate_sample_size(
     return numerator / denom
 
 
-def sample_data(df: pl.DataFrame):
+def sample_data(df: pl.DataFrame) -> pl.DataFrame:
     population_size = len(df)
     if population_size <= 50:
         sample_size = population_size
     else:
-        sample_size = int(round(calculate_sample_size(population_size, 0.01, 1 - 0.005)))
+        sample_size = int(round(calculate_sample_size(population_size)))
 
     population_size = len(df)
     input_data_sample_indexes = random.sample(range(population_size), sample_size)
     return df[input_data_sample_indexes]
 
 
-def infer_types(data: pl.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_cutoff: int = 1e4) -> TypeInformation:
+def infer_types(
+        data: pl.DataFrame,
+        pct_invalid: float,
+        seed_nr: int = 420,
+        mp_cutoff: int = 1e4,
+) -> TypeInformation:
     """
     Infers the data types of each column of the dataset by analyzing a small sample of
     each column's items.
@@ -391,13 +397,13 @@ def infer_types(data: pl.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_c
     log.info(
         f'from a total population of {population_size}, this is equivalent to {round(sample_size*100/population_size, 1)}% of your data.') # noqa
 
-    nr_procs = 1  # TODO: enable parallelism
+    nr_procs = get_nr_procs(df=sample_df)
     if data.estimated_size() > mp_cutoff and nr_procs > 1:
         log.info(f'Using {nr_procs} processes to deduct types.')
         pool = mp.Pool(processes=nr_procs)
-        # Make type `object` so that dataframe cells can be python lists
+        # column-wise parallelization
         answer_arr = pool.map(get_column_data_type, [
-            (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns
+            (sample_df[x].drop_nans().drop_nulls(), data[x], x, pct_invalid) for x in sample_df.columns
         ])
         pool.close()
         pool.join()
