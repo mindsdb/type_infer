@@ -154,7 +154,7 @@ def count_data_types_in_column(data):
         def _wrapped_type_checker(x):
             try:
                 return type_checker(x)
-            except:
+            except Exception:
                 return None
 
         checks[type_checker.__name__] = data.astype(str).apply(lambda x: _wrapped_type_checker(x))
@@ -243,10 +243,6 @@ def get_column_data_type(arg_tup):
         can_be_tags = False
         if all(isinstance(x, str) for x in data):
             can_be_tags = True
-            delimiter = ','
-            split = data.apply(lambda x: [t.strip() for t in x.split(',')])
-            lengths2 = [len(x) for x in split]
-            unique_tokens2 = set([x for y in split for x in y])
 
         # If more than 30% of the samples contain more than 1 category and there's more than 6 and less than 30 of them and they are shared between the various cells # noqa
         if (can_be_tags and np.mean(lengths) > 1.3 and
