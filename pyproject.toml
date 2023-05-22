@@ -18,7 +18,7 @@ colorlog = "^6.5.0"
 langid = "^1.1.6"
 nltk = "^3"
 toml = "^0.10.2"
-psutil = "^5.9.9"
+psutil = "^5.9.0"
 
 
 [build-system]
