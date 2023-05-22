@@ -42,7 +42,7 @@ Setting up a dev environment
 Quick start
 =======================
 
-``type_infer`` works with ``polars.DataFrames``.
+``type_infer`` works with ``pandas.DataFrames``.
 
 .. code-block:: python
 

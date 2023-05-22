@@ -1,12 +1,12 @@
 import unittest
-import polars as pl
+import pandas as pd
 
 from type_infer.infer import infer_types
 
 
 class TestTypeInference(unittest.TestCase):
     def test_0_airline_sentiment(self):
-        df = pl.read_csv("tests/data/airline_sentiment_sample.csv")
+        df = pd.read_csv("tests/data/airline_sentiment_sample.csv")
         inferred_types = infer_types(df, pct_invalid=0)
 
         expected_types = {
@@ -34,17 +34,12 @@ class TestTypeInference(unittest.TestCase):
         expected_ids = {
             'tweet_id': 'Foreign key',
             'name': 'Unknown identifier',
-            'negativereason_gold': 'No Information',
         }
         self.assertEqual(expected_types, inferred_types.dtypes)
         self.assertEqual(expected_ids, inferred_types.identifiers)
 
     def test_1_stack_overflow_survey(self):
-        # df = pl.read_csv("tests/data/stack_overflow_survey_sample.csv")
-        df = pl.read_csv(
-            "/Users/Pato/Work/MindsDB/private-benchmarks/benchmarks/datasets/tripadvisor_binary/data.csv",
-            infer_schema_length=1000,
-        )
+        df = pd.read_csv("tests/data/stack_overflow_survey_sample.csv")
 
         expected_types = {
             'Respondent': 'integer',
@@ -71,8 +66,8 @@ class TestTypeInference(unittest.TestCase):
 
         inferred_types = infer_types(df, pct_invalid=0)
 
-        # for col in expected_types:
-        #     self.assertTrue(expected_types[col], inferred_types.dtypes[col])
-        #
-        # for col in expected_ids:
-        #     self.assertTrue(expected_ids[col], inferred_types.identifiers[col])
+        for col in expected_types:
+            self.assertTrue(expected_types[col], inferred_types.dtypes[col])
+
+        for col in expected_ids:
+            self.assertTrue(expected_ids[col], inferred_types.identifiers[col])

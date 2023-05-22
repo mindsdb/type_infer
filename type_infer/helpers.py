@@ -277,7 +277,7 @@ def get_nr_procs(df=None):
     else:
         available_mem = psutil.virtual_memory().available
         if df is not None:
-            max_per_proc_usage = df.estimated_size()
+            max_per_proc_usage = df.size
         else:
             max_per_proc_usage = 0.2 * pow(10, 9)  # multiplier * 1GB
 
