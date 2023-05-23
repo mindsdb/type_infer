@@ -149,30 +149,18 @@ def count_data_types_in_column(data):
                      get_binary_type,
                      type_check_date]
 
-    checks = pd.DataFrame()
-    for type_checker in type_checkers:
-        def _wrapped_type_checker(arr: np.ndarray):
-            typs = []
-            for x in arr:
-                try:
-                    typs.append(type_checker(str(x)))
-                except Exception:
-                    typs.append(None)
-            return typs
-        checks[type_checker.__name__] = _wrapped_type_checker(data)
+    for element in data:
+        for type_checker in type_checkers:
+            try:
+                dtype_guess = type_checker(element)
+            except Exception:
+                dtype_guess = None
+            if dtype_guess is not None:
+                dtype_counts[dtype_guess] += 1
+                break
+        else:
+            dtype_counts[dtype.invalid] += 1
 
-    pending_idxs = set(checks.index)
-    for check_name in checks.columns:
-        if pending_idxs:
-            series = checks[check_name]
-            hist = series.value_counts().to_dict()
-            for typ, count in hist.items():
-                if typ not in (None, ):
-                    dtype_counts[typ] += count
-                    matches = set(series.where(lambda x: x == typ).index.tolist())
-                    pending_idxs -= matches
-
-    dtype_counts[dtype.invalid] += len(pending_idxs)
     return dtype_counts
 
 

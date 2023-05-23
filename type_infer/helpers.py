@@ -265,6 +265,7 @@ def contains_alnum(text):
 
 
 def get_nr_procs(df=None):
+    return 1
     if 'MINDSDB_N_WORKERS' in os.environ:
         try:
             n = int(os.environ['MINDSDB_N_WORKERS'])
