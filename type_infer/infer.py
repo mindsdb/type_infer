@@ -151,13 +151,13 @@ def count_data_types_in_column(data):
 
     checks = pd.DataFrame()
     for type_checker in type_checkers:
-        def _wrapped_type_checker(x):
+        def _wrapped_type_checker(x: np.ndarray):
             try:
-                return type_checker(x)
+                return type_checker(x[0])
             except Exception:
                 return None
 
-        checks[type_checker.__name__] = data.astype(str).apply(lambda x: _wrapped_type_checker(x))
+        checks[type_checker.__name__] = data.astype(str).apply(lambda x: _wrapped_type_checker(x), axis=1, raw=True)
 
     pending_idxs = set(checks.index)
     for check_name in checks.columns:
@@ -223,7 +223,7 @@ def get_column_data_type(arg_tup):
         curr_dtype = max_known_dtype
 
     nr_vals = len(full_data)
-    nr_distinct_vals = len(set([str(x) for x in full_data]))
+    nr_distinct_vals = full_data[col_name].nunique()
 
     # Is it a quantity?
     if curr_dtype not in (dtype.datetime, dtype.date):
