@@ -408,14 +408,14 @@ def infer_types(
         pool = mp.Pool(processes=nr_procs)
         # column-wise parallelization
         answer_arr = pool.map(get_column_data_type, [
-            (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns
+            (sample_df[[x]].dropna(), data[[x]], x, pct_invalid) for x in sample_df.columns
         ])
         pool.close()
         pool.join()
     else:
         answer_arr = []
         for x in sample_df.columns:
-            answer_arr.append(get_column_data_type([sample_df[x].dropna(), data[x], x, pct_invalid]))
+            answer_arr.append(get_column_data_type([sample_df[[x]].dropna(), data[[x]], x, pct_invalid]))
 
     for i, col_name in enumerate(sample_df.columns):
         (data_dtype, data_dtype_dist, additional_info, warn, info) = answer_arr[i]

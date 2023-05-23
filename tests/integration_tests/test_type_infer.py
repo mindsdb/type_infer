@@ -23,9 +23,9 @@ class TestTypeInference(unittest.TestCase):
 
             'tweet_created': 'datetime',
 
-            'negativereason': 'short_text',
-            'tweet_location': 'short_text',
-            'user_timezone': 'short_text',
+            'negativereason': 'categorical',
+            'tweet_location': 'categorical',
+            'user_timezone': 'categorical',
             'text': 'rich_text',
 
             'tweet_coord': 'categorical',  # TODO: should be detected as coordinates
