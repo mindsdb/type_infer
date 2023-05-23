@@ -4,7 +4,7 @@ import imghdr
 import sndhdr
 import multiprocessing as mp
 from collections import Counter
-from typing import List
+from typing import List, Union
 
 from scipy.stats import norm
 from dateutil.parser import parse
@@ -151,13 +151,15 @@ def count_data_types_in_column(data):
 
     checks = pd.DataFrame()
     for type_checker in type_checkers:
-        def _wrapped_type_checker(x: np.ndarray):
-            try:
-                return type_checker(x[0])
-            except Exception:
-                return None
-
-        checks[type_checker.__name__] = data.astype(str).apply(lambda x: _wrapped_type_checker(x), axis=1, raw=True)
+        def _wrapped_type_checker(arr: np.ndarray):
+            typs = []
+            for x in arr:
+                try:
+                    typs.append(type_checker(str(x)))
+                except Exception:
+                    typs.append(None)
+            return typs
+        checks[type_checker.__name__] = _wrapped_type_checker(data)
 
     pending_idxs = set(checks.index)
     for check_name in checks.columns:
@@ -174,7 +176,7 @@ def count_data_types_in_column(data):
     return dtype_counts
 
 
-def get_column_data_type(arg_tup):
+def get_column_data_type(data: Union[np.ndarray, list], full_data: pd.DataFrame, col_name: str, pct_invalid: float):
     """
     Provided the column data, define its data type and data subtype.
 
@@ -184,7 +186,6 @@ def get_column_data_type(arg_tup):
     :return: type and type distribution, we can later use type_distribution to determine data quality
     NOTE: type distribution is the count that this column has for belonging cells to each DATA_TYPE
     """
-    data, full_data, col_name, pct_invalid = arg_tup
     log.info(f'Infering type for: {col_name}')
     additional_info = {'other_potential_dtypes': []}
 
@@ -222,8 +223,8 @@ def get_column_data_type(arg_tup):
     else:
         curr_dtype = max_known_dtype
 
-    nr_vals = len(full_data)
-    nr_distinct_vals = full_data[col_name].nunique()
+    nr_vals = len(data)
+    nr_distinct_vals = len(set([str(x) for x in data]))
 
     # Is it a quantity?
     if curr_dtype not in (dtype.datetime, dtype.date):
@@ -407,15 +408,15 @@ def infer_types(
         log.info(f'Using {nr_procs} processes to deduct types.')
         pool = mp.Pool(processes=nr_procs)
         # column-wise parallelization
-        answer_arr = pool.map(get_column_data_type, [
-            (sample_df[[x]].dropna(), data[[x]], x, pct_invalid) for x in sample_df.columns
+        answer_arr = pool.starmap(get_column_data_type, [
+            (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns.values
         ])
         pool.close()
         pool.join()
     else:
         answer_arr = []
         for x in sample_df.columns:
-            answer_arr.append(get_column_data_type([sample_df[[x]].dropna(), data[[x]], x, pct_invalid]))
+            answer_arr.append(get_column_data_type(sample_df[x].dropna(), data, x, pct_invalid))
 
     for i, col_name in enumerate(sample_df.columns):
         (data_dtype, data_dtype_dist, additional_info, warn, info) = answer_arr[i]
