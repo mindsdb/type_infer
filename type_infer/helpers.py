@@ -78,6 +78,8 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
     data = list(data)
     if isinstance(data[0], list):
         nr_unique = len(set(tuple(x) for x in data))
+    elif isinstance(data[0], dict):
+        nr_unique = len(set(str(x) for x in data))
     else:
         nr_unique = len(set(data))
 
