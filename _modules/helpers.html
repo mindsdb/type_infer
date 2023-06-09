@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>helpers &mdash; type_infer 0.0.9 documentation</title>
+  <title>helpers &mdash; type_infer 0.0.10 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                0.0.9
+                0.0.10
               </div>
             
           
@@ -169,10 +169,13 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">colorlog</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">st</span>
 <span class="kn">from</span> <span class="nn">langid.langid</span> <span class="kn">import</span> <span class="n">LanguageIdentifier</span>
@@ -360,7 +363,7 @@
     <span class="n">identifier</span> <span class="o">=</span> <span class="n">LanguageIdentifier</span><span class="o">.</span><span class="n">from_modelstring</span><span class="p">(</span><span class="n">langid_model</span><span class="p">,</span> <span class="n">norm_probs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">])</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lang_probs_cache</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">lang_probs</span> <span class="o">=</span> <span class="n">identifier</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
@@ -384,19 +387,27 @@
     <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">text_dist</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenize_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">tokens_no_stop</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
-        <span class="n">nr_words_dist</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">nr_words</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+        <span class="n">tokens_no_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens_no_stop</span><span class="p">:</span>
-            <span class="n">word_dist</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">text_dist</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">n_tokens</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_dist</span><span class="p">)</span>
+        <span class="n">nr_words_dist</span><span class="p">[</span><span class="n">n_tokens</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">nr_words</span> <span class="o">+=</span> <span class="n">n_tokens</span>
+
+        <span class="c1"># merge text_dist into word_dist</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">text_dist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">word_dist</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span>
 
     <span class="k">return</span> <span class="n">nr_words</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">word_dist</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nr_words_dist</span><span class="p">)</span>
 
 
 <span class="c1"># @TODO: eventually move these into .helpers.text</span>
-<span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">decontracted</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="k">if</span> <span class="n">contains_alnum</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
+<div class="viewcode-block" id="tokenize_text"><a class="viewcode-back" href="../helpers.html#helpers.tokenize_text">[docs]</a><span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Generator instead of list comprehension for optimal memory usage &amp; runtime &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">decontracted</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="k">if</span> <span class="n">contains_alnum</span><span class="p">(</span><span class="n">t</span><span class="p">))</span></div>
 
 
 <span class="k">def</span> <span class="nf">decontracted</span><span class="p">(</span><span class="n">phrase</span><span class="p">):</span>
@@ -421,6 +432,27 @@
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">get_nr_procs</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;MINDSDB_N_WORKERS&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MINDSDB_N_WORKERS&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">n</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">available_mem</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">available</span>
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_per_proc_usage</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_per_proc_usage</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>  <span class="c1"># multiplier * 1GB</span>
+
+        <span class="n">proc_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">available_mem</span> <span class="o">//</span> <span class="n">max_per_proc_usage</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">proc_count</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
            </div>
