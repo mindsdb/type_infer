@@ -2,18 +2,19 @@ import re
 import random
 import imghdr
 import sndhdr
-import dateutil
 import multiprocessing as mp
 from collections import Counter
-from typing import List
+from typing import List, Union
 
 from scipy.stats import norm
+from dateutil.parser import parse
 import pandas as pd
 import numpy as np
 
 from type_infer.base import TypeInformation
 from type_infer.dtype import dtype
 from type_infer.helpers import seed, log  # TODO: move somewhere else?
+from type_infer.helpers import get_nr_procs
 from type_infer.helpers import is_nan_numeric, get_identifier_description_mp, cast_string_to_python_type, \
     get_language_dist, analyze_sentences
 
@@ -108,7 +109,7 @@ def type_check_sequence(element: object) -> str:
         else:
             dtype_guess = dtype.cat_array
     else:
-        for sep_char in [',', '\t', '|', ' ']:
+        for sep_char in [',', '\t', '|', ' ']:  # @TODO: potential bottleneck, cutoff after a while
             all_nr = True
             if '[' in element:
                 ele_arr = element.rstrip(']').lstrip('[').split(sep_char)
@@ -128,7 +129,7 @@ def type_check_sequence(element: object) -> str:
 
 def type_check_date(element: object) -> str:
     try:
-        dt = dateutil.parser.parse(str(element))
+        dt = parse(str(element))
 
         # Not accurate 100% for a single datetime str, but should work in aggregate
         if dt.hour == 0 and dt.minute == 0 and dt.second == 0 and len(str(element)) <= 16:
@@ -163,7 +164,7 @@ def count_data_types_in_column(data):
     return dtype_counts
 
 
-def get_column_data_type(arg_tup):
+def get_column_data_type(data: Union[np.ndarray, list], full_data: pd.DataFrame, col_name: str, pct_invalid: float):
     """
     Provided the column data, define its data type and data subtype.
 
@@ -173,7 +174,6 @@ def get_column_data_type(arg_tup):
     :return: type and type distribution, we can later use type_distribution to determine data quality
     NOTE: type distribution is the count that this column has for belonging cells to each DATA_TYPE
     """
-    data, full_data, col_name, pct_invalid = arg_tup
     log.info(f'Infering type for: {col_name}')
     additional_info = {'other_potential_dtypes': []}
 
@@ -211,8 +211,8 @@ def get_column_data_type(arg_tup):
     else:
         curr_dtype = max_known_dtype
 
-    nr_vals = len(full_data)
-    nr_distinct_vals = len(set([str(x) for x in full_data]))
+    nr_vals = len(data)
+    nr_distinct_vals = len(set([str(x) for x in data]))
 
     # Is it a quantity?
     if curr_dtype not in (dtype.datetime, dtype.date):
@@ -232,11 +232,6 @@ def get_column_data_type(arg_tup):
         can_be_tags = False
         if all(isinstance(x, str) for x in data):
             can_be_tags = True
-            delimiter = ','
-            for item in data:
-                item_tags = [t.strip() for t in item.split(delimiter)]
-                lengths.append(len(item_tags))
-                unique_tokens = unique_tokens.union(set(item_tags))
 
         # If more than 30% of the samples contain more than 1 category and there's more than 6 and less than 30 of them and they are shared between the various cells # noqa
         if (can_be_tags and np.mean(lengths) > 1.3 and
@@ -259,7 +254,7 @@ def get_column_data_type(arg_tup):
     # If curr_data_type is still None, then it's text or category
     if curr_dtype is None:
         log.info(f'Doing text detection for column: {col_name}')
-        lang_dist = get_language_dist(data)
+        lang_dist = get_language_dist(data)  # TODO: bottleneck
 
         # Normalize lang probabilities
         for lang in lang_dist:
@@ -269,7 +264,7 @@ def get_column_data_type(arg_tup):
         if lang_dist['Unknown'] > 0.5:
             curr_dtype = dtype.categorical
         else:
-            nr_words, word_dist, nr_words_dist = analyze_sentences(data)
+            nr_words, word_dist, nr_words_dist = analyze_sentences(data)  # TODO: maybe pass entire corpus at once
 
             if 1 in nr_words_dist and nr_words_dist[1] == nr_words:
                 curr_dtype = dtype.categorical
@@ -295,8 +290,8 @@ def get_column_data_type(arg_tup):
 
 def calculate_sample_size(
     population_size,
-    margin_error=.05,
-    confidence_level=.99,
+    margin_error=.01,
+    confidence_level=.995,
     sigma=1 / 2
 ):
     """
@@ -352,19 +347,24 @@ def calculate_sample_size(
     return numerator / denom
 
 
-def sample_data(df: pd.DataFrame):
+def sample_data(df: pd.DataFrame) -> pd.DataFrame:
     population_size = len(df)
     if population_size <= 50:
         sample_size = population_size
     else:
-        sample_size = int(round(calculate_sample_size(population_size, 0.01, 1 - 0.005)))
+        sample_size = int(round(calculate_sample_size(population_size)))
 
     population_size = len(df)
     input_data_sample_indexes = random.sample(range(population_size), sample_size)
     return df.iloc[input_data_sample_indexes]
 
 
-def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_cutoff: int = 1e4) -> TypeInformation:
+def infer_types(
+        data: pd.DataFrame,
+        pct_invalid: float,
+        seed_nr: int = 420,
+        mp_cutoff: int = 1e4,
+) -> TypeInformation:
     """
     Infers the data types of each column of the dataset by analyzing a small sample of
     each column's items.
@@ -391,22 +391,22 @@ def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_c
     log.info(
         f'from a total population of {population_size}, this is equivalent to {round(sample_size*100/population_size, 1)}% of your data.') # noqa
 
-    nr_procs = 1  # TODO: enable parallelism
+    nr_procs = get_nr_procs(df=sample_df)
     if data.size > mp_cutoff and nr_procs > 1:
         log.info(f'Using {nr_procs} processes to deduct types.')
         pool = mp.Pool(processes=nr_procs)
-        # Make type `object` so that dataframe cells can be python lists
-        answer_arr = pool.map(get_column_data_type, [
+        # column-wise parallelization  # TODO: evaluate switching to row-wise split instead
+        answer_arr = pool.starmap(get_column_data_type, [
             (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns.values
         ])
         pool.close()
         pool.join()
     else:
         answer_arr = []
-        for x in sample_df.columns.values:
-            answer_arr.append(get_column_data_type([sample_df[x].dropna(), data[x], x, pct_invalid]))
+        for x in sample_df.columns:
+            answer_arr.append(get_column_data_type(sample_df[x].dropna(), data, x, pct_invalid))
 
-    for i, col_name in enumerate(sample_df.columns.values):
+    for i, col_name in enumerate(sample_df.columns):
         (data_dtype, data_dtype_dist, additional_info, warn, info) = answer_arr[i]
 
         for msg in warn:
@@ -426,17 +426,17 @@ def infer_types(data: pd.DataFrame, pct_invalid: float, seed_nr: int = 420, mp_c
         pool = mp.Pool(processes=nr_procs)
         answer_arr = pool.map(get_identifier_description_mp, [
             (data[x], x, type_information.dtypes[x])
-            for x in sample_df.columns.values
+            for x in sample_df.columns
         ])
         pool.close()
         pool.join()
     else:
         answer_arr = []
-        for x in sample_df.columns.values:
+        for x in sample_df.columns:
             answer = get_identifier_description_mp([data[x], x, type_information.dtypes[x]])
             answer_arr.append(answer)
 
-    for i, col_name in enumerate(sample_df.columns.values):
+    for i, col_name in enumerate(sample_df.columns):
         # work with the full data
         if answer_arr[i] is not None:
             log.warning(f'Column {col_name} is an identifier of type "{answer_arr[i]}"')
