@@ -264,7 +264,7 @@ def get_column_data_type(data: Union[np.ndarray, list], full_data: pd.DataFrame,
         if lang_dist['Unknown'] > 0.5:
             curr_dtype = dtype.categorical
         else:
-            nr_words, word_dist, nr_words_dist = analyze_sentences(data)  # TODO: bottleneck pass entire corpus at once?
+            nr_words, word_dist, nr_words_dist = analyze_sentences(data)  # TODO: maybe pass entire corpus at once
 
             if 1 in nr_words_dist and nr_words_dist[1] == nr_words:
                 curr_dtype = dtype.categorical
@@ -395,7 +395,7 @@ def infer_types(
     if data.size > mp_cutoff and nr_procs > 1:
         log.info(f'Using {nr_procs} processes to deduct types.')
         pool = mp.Pool(processes=nr_procs)
-        # column-wise parallelization
+        # column-wise parallelization  # TODO: evaluate switching to row-wise split instead
         answer_arr = pool.starmap(get_column_data_type, [
             (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns.values
         ])
