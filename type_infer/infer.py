@@ -21,7 +21,8 @@ from type_infer.helpers import is_nan_numeric, get_identifier_description_mp, ca
 
 # @TODO: hardcode for distance, time, subunits of currency (e.g. cents) and other common units
 # @TODO: Add tests with plenty of examples
-def get_quantity_col_info(col_data: List[object]) -> str:
+def get_quantity_col_info(col_data: pd.Series) -> str:
+    assert isinstance(col_data, pd.Series)
     char_const = None
     nr_map = set()
     for val in col_data:
@@ -216,7 +217,7 @@ def get_column_data_type(data: Union[np.ndarray, list], full_data: pd.DataFrame,
 
     # Is it a quantity?
     if curr_dtype not in (dtype.datetime, dtype.date):
-        is_quantity, quantitiy_info = get_quantity_col_info(full_data)
+        is_quantity, quantitiy_info = get_quantity_col_info(data)
         if is_quantity:
             additional_info['quantitiy_info'] = quantitiy_info
             curr_dtype = dtype.quantity
