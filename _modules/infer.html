@@ -189,7 +189,8 @@
 
 <span class="c1"># @TODO: hardcode for distance, time, subunits of currency (e.g. cents) and other common units</span>
 <span class="c1"># @TODO: Add tests with plenty of examples</span>
-<span class="k">def</span> <span class="nf">get_quantity_col_info</span><span class="p">(</span><span class="n">col_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_quantity_col_info</span><span class="p">(</span><span class="n">col_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
     <span class="n">char_const</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">nr_map</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">col_data</span><span class="p">:</span>
@@ -384,7 +385,7 @@
 
     <span class="c1"># Is it a quantity?</span>
     <span class="k">if</span> <span class="n">curr_dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
-        <span class="n">is_quantity</span><span class="p">,</span> <span class="n">quantitiy_info</span> <span class="o">=</span> <span class="n">get_quantity_col_info</span><span class="p">(</span><span class="n">full_data</span><span class="p">)</span>
+        <span class="n">is_quantity</span><span class="p">,</span> <span class="n">quantitiy_info</span> <span class="o">=</span> <span class="n">get_quantity_col_info</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">is_quantity</span><span class="p">:</span>
             <span class="n">additional_info</span><span class="p">[</span><span class="s1">&#39;quantitiy_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantitiy_info</span>
             <span class="n">curr_dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">quantity</span>
