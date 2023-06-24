@@ -40,6 +40,8 @@ def is_nan_numeric(value: object) -> bool:
     """
     Determines if **value** might be `nan` or `inf` or some other numeric value (i.e. which can be cast as `float`) that is not actually a number.
     """  # noqa
+    if isinstance(value, np.ndarray) or isinstance(value, Iterable):
+        return False
 
     try:
         value = str(value)
