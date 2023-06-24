@@ -130,7 +130,7 @@ def type_check_sequence(element: object) -> str:
 
 def type_check_date(element: object) -> str:
     try:
-        dt = parse(str(element))
+        dt = pd.to_datetime(element)
 
         # Not accurate 100% for a single datetime str, but should work in aggregate
         if dt.hour == 0 and dt.minute == 0 and dt.second == 0 and len(str(element)) <= 16:
