@@ -7,7 +7,6 @@ from collections import Counter
 from typing import List, Union
 
 from scipy.stats import norm
-from dateutil.parser import parse
 import pandas as pd
 import numpy as np
 
