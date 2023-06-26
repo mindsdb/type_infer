@@ -187,7 +187,10 @@ def clean_float(val):
     if val in ('', '.', 'None', 'nan'):
         return None
 
-    return float(val)
+    try:
+        return float(val)
+    except Exception:
+        return None
 
 
 def get_language_dist(data):
