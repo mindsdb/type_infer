@@ -25,7 +25,11 @@
   </h3>
   
 </div>
+
 Automated type inference for Machine Learning pipelines.
+
+
+In the context of tabular data, `type_infer` aims for optimal interpretation of each column’s data type for ML use cases. For example, strings with date or time format would be classified as timestamps, or integers as categorical if there is a sufficiently small set of unique values in the column.
 
 # Documentation
 <a href="https://mindsdb.github.io/type_infer">Documentation link</a>

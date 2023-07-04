@@ -1,10 +1,13 @@
 import os
 import re
 import nltk
+import psutil
 import random
 import string
 import logging
 import colorlog
+import multiprocessing as mp
+
 import numpy as np
 import scipy.stats as st
 from langid.langid import LanguageIdentifier
@@ -37,6 +40,8 @@ def is_nan_numeric(value: object) -> bool:
     """
     Determines if **value** might be `nan` or `inf` or some other numeric value (i.e. which can be cast as `float`) that is not actually a number.
     """  # noqa
+    if isinstance(value, np.ndarray) or (type(value) != str and isinstance(value, Iterable)):
+        return False
 
     try:
         value = str(value)
@@ -78,6 +83,8 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
     data = list(data)
     if isinstance(data[0], list):
         nr_unique = len(set(tuple(x) for x in data))
+    elif isinstance(data[0], dict):
+        nr_unique = len(set(str(x) for x in data))
     else:
         nr_unique = len(set(data))
 
@@ -180,7 +187,10 @@ def clean_float(val):
     if val in ('', '.', 'None', 'nan'):
         return None
 
-    return float(val)
+    try:
+        return float(val)
+    except Exception:
+        return None
 
 
 def get_language_dist(data):
@@ -190,7 +200,7 @@ def get_language_dist(data):
     identifier = LanguageIdentifier.from_modelstring(langid_model, norm_probs=True)
     for text in data:
         text = str(text)
-        text = ''.join([c for c in text if c not in string.punctuation])
+        text = text.translate(str.maketrans('', '', string.punctuation))
         if text not in lang_probs_cache:
             try:
                 lang_probs = identifier.classify(text)
@@ -214,19 +224,27 @@ def analyze_sentences(data):
     stop_words = set(stopwords.words('english'))
     for text in map(str, data):
         text = text.lower()
+        text_dist = defaultdict(int)
         tokens = tokenize_text(text)
-        tokens_no_stop = [x for x in tokens if x not in stop_words]
-        nr_words_dist[len(tokens)] += 1
-        nr_words += len(tokens)
+        tokens_no_stop = (x for x in tokens if x not in stop_words)
         for tok in tokens_no_stop:
-            word_dist[tok] += 1
+            text_dist[tok] += 1
+
+        n_tokens = len(text_dist)
+        nr_words_dist[n_tokens] += 1
+        nr_words += n_tokens
+
+        # merge text_dist into word_dist
+        for k, v in text_dist.items():
+            word_dist[k] += v
 
     return nr_words, dict(word_dist), dict(nr_words_dist)
 
 
 # @TODO: eventually move these into .helpers.text
 def tokenize_text(text):
-    return [t.lower() for t in nltk.word_tokenize(decontracted(text)) if contains_alnum(t)]
+    """ Generator instead of list comprehension for optimal memory usage & runtime """
+    return (t.lower() for t in nltk.word_tokenize(decontracted(text)) if contains_alnum(t))
 
 
 def decontracted(phrase):
@@ -251,3 +269,24 @@ def contains_alnum(text):
         if c.isalnum():
             return True
     return False
+
+
+def get_nr_procs(df=None):
+    if 'MINDSDB_N_WORKERS' in os.environ:
+        try:
+            n = int(os.environ['MINDSDB_N_WORKERS'])
+        except ValueError:
+            n = 1
+        return n
+    elif os.name == 'nt':
+        return 1
+    else:
+        available_mem = psutil.virtual_memory().available
+        if df is not None:
+            max_per_proc_usage = df.size
+        else:
+            max_per_proc_usage = 0.2 * pow(10, 9)  # multiplier * 1GB
+
+        proc_count = int(min(mp.cpu_count() - 1, available_mem // max_per_proc_usage))
+
+        return max(proc_count, 1)
