@@ -1,6 +1,10 @@
+from uuid import uuid4
 import unittest
+import numpy as np
 import pandas as pd
+from datetime import datetime, timedelta
 
+from type_infer.dtype import dtype
 from type_infer.infer import infer_types
 
 
@@ -71,3 +75,31 @@ class TestTypeInference(unittest.TestCase):
 
         for col in expected_ids:
             self.assertTrue(expected_ids[col], inferred_types.identifiers[col])
+
+    def test_2_simple(self):
+        n_points = 50
+        n_corrupted = 2
+        df = pd.DataFrame({
+            'date': [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(n_points)],
+            'datetime': [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%dT%H:%M') for i in range(n_points)],
+            'integer': [*range(n_points)],
+            'float': np.linspace(0, n_points, n_points),
+            'uuid': [str(uuid4()) for i in range(n_points)],
+        })
+
+        # manual tinkering
+        df['float'].iloc[-n_corrupted:] = 'random string'
+
+        inferred_types = infer_types(df, pct_invalid=100 * (n_corrupted) / n_points)
+        expected_types = {
+            'date': dtype.date,
+            'datetime': dtype.datetime,
+            'integer': dtype.integer,
+            'float': dtype.float,
+            'uuid': dtype.categorical,
+        }
+        self.assertEqual(expected_types, inferred_types.dtypes)  # check type inference is correct
+        self.assertTrue(inferred_types.additional_info['date']['dtype_dist']['date'] == n_points)  # no dropped rows (pct_invalid is 0)   # noqa
+        self.assertTrue(inferred_types.additional_info['float']['dtype_dist']['float'] == n_points - 2)  # due to str injection  # noqa
+        self.assertTrue('uuid' in inferred_types.identifiers)
+        self.assertTrue(inferred_types.identifiers['uuid'] == 'UUID')
