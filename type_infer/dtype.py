@@ -1,3 +1,7 @@
+from pydantic.dataclasses import dataclass
+
+
+@dataclass
 class dtype:
     """
     Definitions of all data types currently supported:
@@ -14,34 +18,34 @@ class dtype:
     """ # noqa
 
     # Numerical type data
-    integer = "integer"
-    float = "float"
-    quantity = "quantity"
+    integer: str = "integer"
+    float: str = "float"
+    quantity: str = "quantity"
 
     # Categorical type data
-    binary = "binary"
-    categorical = "categorical"
-    tags = "tags"
+    binary: str = "binary"
+    categorical: str = "categorical"
+    tags: str = "tags"
 
     # Dates and Times (time-series)
-    date = "date"
-    datetime = "datetime"
+    date: str = "date"
+    datetime: str = "datetime"
 
     # Text
-    short_text = "short_text"
-    rich_text = "rich_text"
+    short_text: str = "short_text"
+    rich_text: str = "rich_text"
 
     # Complex Data types
-    image = "image"
-    audio = "audio"
-    video = "video"
+    image: str = "image"
+    audio: str = "audio"
+    video: str = "video"
 
     # Series/Sequences
-    num_array = "num_array"
-    cat_array = "cat_array"
-    num_tsarray = 'num_tsarray'
-    cat_tsarray = 'cat_tsarray'
+    num_array: str = "num_array"
+    cat_array: str = "cat_array"
+    num_tsarray: str = 'num_tsarray'
+    cat_tsarray: str = 'cat_tsarray'
 
     # Misc (Unk/NaNs)
-    empty = "empty"
-    invalid = "invalid"
+    empty: str = "empty"
+    invalid: str = "invalid"
