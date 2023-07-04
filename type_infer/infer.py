@@ -233,7 +233,7 @@ def get_column_data_type(data: Union[np.ndarray, list], full_data: pd.DataFrame,
         if all(isinstance(x, str) for x in data):
             can_be_tags = True
 
-        mean_lenghts = np.mean(lengths) if len(lenghts) > 0 else 0
+        mean_lenghts = np.mean(lengths) if len(lengths) > 0 else 0
 
         # If more than 30% of the samples contain more than 1 category and there's more than 6 and less than 30 of them and they are shared between the various cells # noqa
         if (can_be_tags and mean_lenghts > 1.3 and
