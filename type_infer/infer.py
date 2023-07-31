@@ -233,10 +233,12 @@ def get_column_data_type(data: Union[np.ndarray, list], full_data: pd.DataFrame,
         if all(isinstance(x, str) for x in data):
             can_be_tags = True
 
+        mean_lenghts = np.mean(lengths) if len(lengths) > 0 else 0
+
         # If more than 30% of the samples contain more than 1 category and there's more than 6 and less than 30 of them and they are shared between the various cells # noqa
-        if (can_be_tags and np.mean(lengths) > 1.3 and
+        if (can_be_tags and mean_lenghts > 1.3 and
                 6 <= len(unique_tokens) <= 30 and
-                len(unique_tokens) / np.mean(lengths) < (len(data) / 4)):
+                len(unique_tokens) / mean_lenghts < (len(data) / 4)):
             curr_dtype = dtype.tags
 
     # Categorical based on unique values
@@ -392,9 +394,10 @@ def infer_types(
         f'from a total population of {population_size}, this is equivalent to {round(sample_size*100/population_size, 1)}% of your data.') # noqa
 
     nr_procs = get_nr_procs(df=sample_df)
-    if data.size > mp_cutoff and nr_procs > 1:
-        log.info(f'Using {nr_procs} processes to deduct types.')
-        pool = mp.Pool(processes=nr_procs)
+    pool_size = min(nr_procs, len(sample_df.columns.values))
+    if data.size > mp_cutoff and pool_size > 1:
+        log.info(f'Using {pool_size} processes to deduct types.')
+        pool = mp.Pool(processes=pool_size)
         # column-wise parallelization  # TODO: evaluate switching to row-wise split instead
         answer_arr = pool.starmap(get_column_data_type, [
             (sample_df[x].dropna(), data[x], x, pct_invalid) for x in sample_df.columns.values
@@ -422,8 +425,8 @@ def infer_types(
             'dtype_dist': data_dtype_dist
         }
 
-    if data.size > mp_cutoff and nr_procs > 1:
-        pool = mp.Pool(processes=nr_procs)
+    if data.size > mp_cutoff and pool_size > 1:
+        pool = mp.Pool(processes=pool_size)
         answer_arr = pool.map(get_identifier_description_mp, [
             (data[x], x, type_information.dtypes[x])
             for x in sample_df.columns

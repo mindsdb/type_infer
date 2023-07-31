@@ -94,7 +94,7 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
     unique_pct = nr_unique / len(data)
 
     spaces = [len(str(x).split(' ')) - 1 for x in data]
-    mean_spaces = np.mean(spaces)
+    mean_spaces = np.mean(spaces) if len(spaces) > 0 else 0.0
 
     # Detect hash
     all_same_length = all(len(str(data[0])) == len(str(x)) for x in data)
@@ -113,7 +113,8 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
             else:
                 randomness_per_index.append(S / np.log(N))
 
-        if np.mean(randomness_per_index) > 0.95:
+        mean_randomness = np.mean(randomness_per_index) if len(randomness_per_index) > 0 else 0
+        if mean_randomness > 0.95:
             return 'Hash-like identifier'
 
     # Detect foreign key
