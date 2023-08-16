@@ -131,13 +131,10 @@ def type_check_date(element: object) -> str:
     """
     Check if element corresponds to a date-like object.
     """
-    # check if element represents a unix-timestamp
-    is_timestamp = False
     # check if element represents a date (no hour/minute/seconds)
     is_date = False
     # check if element represents a datetime (has hour/minute/seconds)
     is_datetime = False
-
     # check if it makes sense to convert element to unix time-stamp by
     # evaluating if, when converted, the element represents a number that
     # is compatible with a Unix timestamp (number of seconds since 1970-01-01T:00:00:00)
@@ -154,7 +151,7 @@ def type_check_date(element: object) -> str:
             try:
                 as_dt = pd.to_datetime(element, unit=unit, origin='julian', errors='raise')
                 if min_dt < as_dt < max_dt:
-                    is_timestamp = True
+                    is_datetime = True
                     break
             except Exception:
                 pass
@@ -162,35 +159,32 @@ def type_check_date(element: object) -> str:
             try:
                 as_dt = pd.to_datetime(element, unit=unit, origin='unix', errors='raise')
                 if min_dt < as_dt < max_dt:
-                    is_timestamp = True
+                    is_datetime = True
                     break
             except Exception:
                 pass
-    if is_timestamp:
-        return dtype.timestamp
-
     # check if element represents a date-like object.
     # here we don't check for a validity range like with unix-timestamps
     # because dates as string usually represent something more general than
     # just the number of seconds since an epoch.
     try:
         as_dt = pd.to_datetime(element, errors='raise')
+        is_datetime = True
+    except Exception:
+        pass
+    # finally, if element is represents a datetime object, check if only
+    # date part is contained (no time information)
+    if is_datetime:
         # round element day (drop hour/minute/second)
         dt_d = as_dt.to_period('D').to_timestamp()
         # if rounded datetime equals the datetime itself, it means there was not
         # hour/minute/second information to begin with. Mind the 'localize' to
         # avoid time-zone BS to kick in.
-        if dt_d == as_dt.tz_localize(None):
-            is_date = True
-        else:
-            is_datetime = True
-    except Exception:
-        pass
-
-    if is_datetime:
-        return dtype.datetime
+        is_date = dt_d == as_dt.tz_localize(None)
     if is_date:
         return dtype.date
+    if is_datetime:
+        return dtype.datetime
 
     return None
 
