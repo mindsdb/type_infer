@@ -5,6 +5,7 @@ class dtype:
     - **Numerical**: Data that should be represented in the form of a number. Currently ``integer``, ``float``, and ``quantity`` are supported.
     - **Categorical**: Data that represents a class or label and is discrete. Currently ``binary``, ``categorical``, and ``tags`` are supported.
     - **Date/Time**: Time-series data that is temporal/sequential. Currently ``date``, and ``datetime`` are supported.
+    - **Timestamp**: Data that represents time in the form of the amount of nano/micro/milli-seconds, seconds after midnight 1970-01-01. Julian days are also supported.
     - **Text**: Data that can be considered as language information.  Currently ``short_text``, and ``rich_text`` are supported. Short text has a small vocabulary (~ 100 words) and is generally a limited number of characters. Rich text is anything with greater complexity.
     - **Complex**: Data types that require custom techniques. Currently ``audio``, ``video`` and ``image`` are available, but highly experimental.
     - **Array**: Data in the form of a sequence where order must be preserved. ``tsarray`` dtypes are for "normal" columns that will be transformed to arrays at a row-level because they will be treated as time series.
@@ -26,6 +27,7 @@ class dtype:
     # Dates and Times (time-series)
     date = "date"
     datetime = "datetime"
+    timestamp = "timestamp"
 
     # Text
     short_text = "short_text"
