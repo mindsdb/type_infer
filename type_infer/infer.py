@@ -194,6 +194,7 @@ def type_check_date(element: object) -> str:
 
     return None
 
+
 def count_data_types_in_column(data):
     dtype_counts = Counter()
 
