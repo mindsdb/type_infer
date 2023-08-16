@@ -166,6 +166,9 @@ def type_check_date(element: object) -> str:
                     break
             except Exception:
                 pass
+    if is_timestamp:
+        return dtype.timestamp
+
     # check if element represents a date-like object.
     # here we don't check for a validity range like with unix-timestamps
     # because dates as string usually represent something more general than
@@ -184,19 +187,12 @@ def type_check_date(element: object) -> str:
     except Exception:
         pass
 
-    # because of the explicit 'unit' argument when checking for timestamps,
-    # element cannot be timestamp AND date/datetime. Similarly, it cannot
-    # be both date and datetime.
-    rtype = None
-    if is_timestamp:
-        rtype = dtype.timestamp
     if is_datetime:
-        rtype = dtype.datetime
+        return dtype.datetime
     if is_date:
-        rtype = dtype.date
+        return dtype.date
 
-    return rtype
-
+    return None
 
 def count_data_types_in_column(data):
     dtype_counts = Counter()
