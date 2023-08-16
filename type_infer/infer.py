@@ -132,64 +132,71 @@ def type_check_date(element: object) -> str:
     Check if element corresponds to a date-like object.
     """
     # check if element represents a unix-timestamp
-    isTimestamp = False
+    is_timestamp = False
     # check if element represents a date (no hour/minute/seconds)
-    isDate = False
+    is_date = False
     # check if element represents a datetime (has hour/minute/seconds)
-    isDatetime = False
+    is_datetime = False
 
-    # check if it makes sense to convert element to unix time-stamp by 
-    # evaluating if, when converted, the element represents a number
-    # that is compatible with a Unix timestamp (number of seconds since 1970-01-01T:00:00:00)
+    # check if it makes sense to convert element to unix time-stamp by
+    # evaluating if, when converted, the element represents a number that
+    # is compatible with a Unix timestamp (number of seconds since 1970-01-01T:00:00:00)
     # note that we also check the number is not larger than the "epochalypse time",
     # which is when the unix timestamp becomes larger than 2^32 - 1 seconds. We do
     # this because timestamps outside this range are likely to be unreliable and hence
     # rather treated as every-day numbers.
-    try:
-        unt = ''
-        for unt in ['ns', 'us', 'ms', 's']:
-            dt = pd.to_datetime(element, unit=unt, origin='unix')
-            if ((dt > pd.to_datetime('1970-01-01T:00:00:00', utc=True)) and \
-                (dt < pd.to_datetime('2038-01-19T03:14:08', utc=True))):
-                isTimestamp = True
-                break
-        # yes some kind of people still use Julian Days
-        dt = pd.to_datetime(element, unit='D', origin='julian')
-        if ((dt > pd.to_datetime('1970-01-01T:00:00:00', utc=True)) and \
-            (dt < pd.to_datetime('2038-01-19T03:14:08', utc=True))):
-            isTimestamp = True
-    except Exception as error:
-        pass 
-    # check if element represents a date-like object. 
+    min_dt = pd.to_datetime('1970-01-01T:00:00:00', utc=True)
+    max_dt = pd.to_datetime('2038-01-19T:03:14:08', utc=True)
+    valid_units = ['ns', 'us', 'ms', 's', 'D']
+    for unit in valid_units:
+        # Yes, some people still use Julian Days...
+        if unit == 'D':
+            try:
+                as_dt = pd.to_datetime(element, unit=unit, origin='julian', errors='raise')
+                if min_dt < as_dt < max_dt:
+                    is_timestamp = True
+                    break
+            except Exception:
+                pass
+        else:
+            try:
+                as_dt = pd.to_datetime(element, unit=unit, origin='unix', errors='raise')
+                if min_dt < as_dt < max_dt:
+                    is_timestamp = True
+                    break
+            except Exception:
+                pass
+    # check if element represents a date-like object.
     # here we don't check for a validity range like with unix-timestamps
     # because dates as string usually represent something more general than
     # just the number of seconds since an epoch.
     try:
-        dt = pd.to_datetime(element, errors='raise')
+        as_dt = pd.to_datetime(element, errors='raise')
         # round element day (drop hour/minute/second)
-        dtd = dt.to_period('D').to_timestamp()
+        dt_d = as_dt.to_period('D').to_timestamp()
         # if rounded datetime equals the datetime itself, it means there was not
         # hour/minute/second information to begin with. Mind the 'localize' to
         # avoid time-zone BS to kick in.
-        if dtd == dt.tz_localize(None):
-            isDate = True
+        if dt_d == as_dt.tz_localize(None):
+            is_date = True
         else:
-            isDatetime = True
-    except Exception as error:
+            is_datetime = True
+    except Exception:
         pass
-    
+
     # because of the explicit 'unit' argument when checking for timestamps,
     # element cannot be timestamp AND date/datetime. Similarly, it cannot
     # be both date and datetime.
     rtype = None
-    if isTimestamp:
+    if is_timestamp:
         rtype = dtype.timestamp
-    if isDatetime:
+    if is_datetime:
         rtype = dtype.datetime
-    if isDate:
+    if is_date:
         rtype = dtype.date
-    
+
     return rtype
+
 
 def count_data_types_in_column(data):
     dtype_counts = Counter()
@@ -441,7 +448,7 @@ def infer_types(
     population_size = len(data)
     log.info(f'Analyzing a sample of {sample_size}')
     log.info(
-        f'from a total population of {population_size}, this is equivalent to {round(sample_size*100/population_size, 1)}% of your data.') # noqa
+        f'from a total population of {population_size}, this is equivalent to {round(sample_size*100/population_size, 1)}% of your data.')  # noqa
 
     nr_procs = get_nr_procs(df=sample_df)
     pool_size = min(nr_procs, len(sample_df.columns.values))
