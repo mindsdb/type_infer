@@ -145,8 +145,8 @@ def type_check_date(element: object) -> str:
     # which is when the unix timestamp becomes larger than 2^32 - 1 seconds. We do
     # this because timestamps outside this range are likely to be unreliable and hence
     # rather treated as every-day numbers.
-    min_dt = pd.to_datetime('1970-01-01T:00:00:00', utc=True)
-    max_dt = pd.to_datetime('2038-01-19T:03:14:08', utc=True)
+    min_dt = pd.to_datetime('1970-01-01 00:00:00', utc=True)
+    max_dt = pd.to_datetime('2038-01-19 03:14:08', utc=True)
     valid_units = ['ns', 'us', 'ms', 's', 'D']
     for unit in valid_units:
         # Yes, some people still use Julian Days...
