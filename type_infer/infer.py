@@ -145,7 +145,6 @@ def type_check_date(element: object) -> str:
     min_dt = pd.to_datetime('1970-01-01 00:00:00', utc=True)
     max_dt = pd.to_datetime('2038-01-19 03:14:08', utc=True)
     valid_units = {'ns': 'unix', 'us': 'unix', 'ms': 'unix', 's': 'unix',
-    # Yes, some people still use Julian Days...
                    'D': 'julian'}
     for unit, origin in valid_units.items():
         try:
