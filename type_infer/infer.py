@@ -148,7 +148,8 @@ def type_check_date(element: object) -> str:
                    'D': 'julian'}
     for unit, origin in valid_units.items():
         try:
-            as_dt = pd.to_datetime(element, unit=unit, origin=origin, errors='raise')
+            as_dt = pd.to_datetime(element, unit=unit, origin=origin,
+                                   errors='raise')
             if min_dt < as_dt < max_dt:
                 is_datetime = True
                 break
