@@ -144,25 +144,17 @@ def type_check_date(element: object) -> str:
     # rather treated as every-day numbers.
     min_dt = pd.to_datetime('1970-01-01 00:00:00', utc=True)
     max_dt = pd.to_datetime('2038-01-19 03:14:08', utc=True)
-    valid_units = ['ns', 'us', 'ms', 's', 'D']
-    for unit in valid_units:
-        # Yes, some people still use Julian Days...
-        if unit == 'D':
-            try:
-                as_dt = pd.to_datetime(element, unit=unit, origin='julian', errors='raise')
-                if min_dt < as_dt < max_dt:
-                    is_datetime = True
-                    break
-            except Exception:
-                pass
-        else:
-            try:
-                as_dt = pd.to_datetime(element, unit=unit, origin='unix', errors='raise')
-                if min_dt < as_dt < max_dt:
-                    is_datetime = True
-                    break
-            except Exception:
-                pass
+    valid_units = {'ns': 'unix', 'us': 'unix', 'ms': 'unix', 's': 'unix',
+    # Yes, some people still use Julian Days...
+                   'D': 'julian'}
+    for unit, origin in valid_units.items():
+        try:
+            as_dt = pd.to_datetime(element, unit=unit, origin=origin, errors='raise')
+            if min_dt < as_dt < max_dt:
+                is_datetime = True
+                break
+        except Exception:
+            pass
     # check if element represents a date-like object.
     # here we don't check for a validity range like with unix-timestamps
     # because dates as string usually represent something more general than
