@@ -1,5 +1,6 @@
+import dataclasses
 from typing import Dict
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
 
@@ -16,11 +17,6 @@ class TypeInformation:
     :param identifiers: Columns within the dataset highly suspected of being identifiers or IDs. These do not contain informatic value, therefore will be ignored in subsequent training/analysis procedures unless manually indicated.
     """ # noqa
 
-    dtypes: Dict[str, str]
-    additional_info: Dict[str, object]
-    identifiers: Dict[str, str]
-
-    def __init__(self):
-        self.dtypes = dict()
-        self.additional_info = dict()
-        self.identifiers = dict()
+    dtypes: Dict[str, str] = dataclasses.field(default_factory=lambda: {})
+    additional_info: Dict[str, object] = dataclasses.field(default_factory=lambda: {})
+    identifiers: Dict[str, str] = dataclasses.field(default_factory=lambda: {})

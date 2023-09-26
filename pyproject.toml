@@ -19,6 +19,7 @@ langid = "^1.1.6"
 nltk = "^3"
 toml = "^0.10.2"
 psutil = "^5.9.0"
+pydantic = "^2.0.0"
 
 
 [build-system]
