@@ -4,7 +4,7 @@ from type_infer import infer
 from type_infer import helpers
 
 
-__version__ = '0.0.15'
+__version__ = '0.0.16'
 
 
 __all__ = ['base', 'dtype', 'infer', 'helpers', '__version__']
