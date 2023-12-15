@@ -1,16 +1,55 @@
+"""
+dtype.py
+
+This modules implements a class called `dtype`, `ColumnType` and derived ones which
+are used to keep track of the data type for each column in a tabular dataset.
+
+Currently supported data types are
+
+    - **Numerical**:
+        Data that should be represented in the form of a number.
+        Currently ``integer``, ``float``, and ``quantity`` are supported.
+    - **Categorical**:
+        Data that represents a class or label and is discrete.
+        Currently ``binary``, ``categorical``, and ``tags`` are supported.
+    - **Date/Time**:
+        Time-aware data that is temporal/sequential.
+        Currently ``date`` (no time information), and ``datetime`` are supported.
+    - **Text**:
+        Data that can be considered as language information.
+        Currently ``short_text``, and ``rich_text`` are supported. Short text has a
+        small vocabulary (~ 100 words) and is generally a limited number of characters.
+        Rich text is anything with greater complexity.
+
+    - **Complex**:
+        Data types that require custom techniques.
+        Currently ``audio``, ``video`` and ``image`` are available.
+        Support for this data types is highly experimental.
+
+    - **Array**:
+        Data in the form of a sequence where order must be preserved. ``tsarray``
+        dtypes are for "normal" columns that will be transformed to arrays at a row-level
+        because they will be treated as time series.
+
+    - **Miscellaneous**:
+        Miscellaneous data descriptors include ``empty``, an explicitly unknown
+        value versus ``invalid``, a data type not currently supported.
+
+    `DataType` differs from `dtype` in that `DataType` has information about the hierarchy
+    of data types. For example, `text` is a more general data type than `number`, and
+    in turn `number` is more general than `float`. This is useful when performing type inference
+    in distributed environments. Other types are derived from DataType using this.
+"""
+
+
 class dtype:
     """
-    Definitions of all data types currently supported:
+    Implementatios `data_type`.
 
-    - **Numerical**: Data that should be represented in the form of a number. Currently ``integer``, ``float``, and ``quantity`` are supported.
-    - **Categorical**: Data that represents a class or label and is discrete. Currently ``binary``, ``categorical``, and ``tags`` are supported.
-    - **Date/Time**: Time-series data that is temporal/sequential. Currently ``date``, and ``datetime`` are supported.
-    - **Text**: Data that can be considered as language information.  Currently ``short_text``, and ``rich_text`` are supported. Short text has a small vocabulary (~ 100 words) and is generally a limited number of characters. Rich text is anything with greater complexity.
-    - **Complex**: Data types that require custom techniques. Currently ``audio``, ``video`` and ``image`` are available, but highly experimental.
-    - **Array**: Data in the form of a sequence where order must be preserved. ``tsarray`` dtypes are for "normal" columns that will be transformed to arrays at a row-level because they will be treated as time series.
-    - **Miscellaneous**: Miscellaneous data descriptors include ``empty``, an explicitly unknown value versus ``invalid``, a data type not currently supported.
-    
-    Custom data types may be implemented here as a flag for subsequent treatment and processing. You are welcome to include your own definitions, so long as they do not override the existing type names (alternatively, if you do, please edit subsequent parts of the preprocessing pipeline to correctly indicate how you want to deal with these data types).
+    Custom data types may be implemented here as a flag for subsequent treatment and processing.
+    You are welcome to include your own definitions, so long as they do not override the existing
+    type names (alternatively, if you do, please edit subsequent parts of the preprocessing pipeline
+    to correctly indicate how you want to deal with these data types).
     """ # noqa
 
     # Numerical type data
@@ -45,3 +84,4 @@ class dtype:
     # Misc (Unk/NaNs)
     empty = "empty"
     invalid = "invalid"
+
