@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 from type_infer.dtype import dtype
-from type_infer.infer import infer_types
+from type_infer.api import infer_types
 
 
 class TestTypeInference(unittest.TestCase):

@@ -2,7 +2,7 @@ import unittest
 import random
 
 import pandas as pd
-from type_infer.infer import get_column_data_type
+from type_infer.api import get_column_data_type
 from type_infer.dtype import dtype
 
 

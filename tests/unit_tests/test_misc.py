@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 import type_infer
-from type_infer.helpers import tokenize_text
+from type_infer.rule_based.helpers import tokenize_text
 
 
 class TestDates(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 
 from type_infer.dtype import dtype
-from type_infer.infer import type_check_date
+from type_infer.rule_based.infer import type_check_date
 
 
 class TestDates(unittest.TestCase):
