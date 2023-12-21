@@ -25,7 +25,6 @@ except LookupError:
     nltk.download('stopwords', quiet=True)
 
 
-
 def get_identifier_description_mp(arg_tup):
     data, column_name, data_dtype = arg_tup
     return get_identifier_description(data, column_name, data_dtype)

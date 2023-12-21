@@ -7,4 +7,4 @@ from type_infer import helpers
 __version__ = '0.0.18'
 
 
-__all__ = ['base', 'dtype', 'api.py', 'helpers', '__version__']
+__all__ = ['base', 'dtype', 'api', 'helpers', '__version__']

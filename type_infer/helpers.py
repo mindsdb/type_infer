@@ -7,7 +7,6 @@ import multiprocessing as mp
 from typing import Iterable
 
 import numpy as np
-from type_infer.dtype import dtype
 
 
 def initialize_log():

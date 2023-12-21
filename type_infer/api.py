@@ -86,7 +86,7 @@ def _sample_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def infer_types(
         data: pd.DataFrame,
-        #TODO: method: InferenceEngine = Union[InferenceEngine.RuleBased, InferenceEngine.BERT],
+        # TODO: method: InferenceEngine = Union[InferenceEngine.RuleBased, InferenceEngine.BERT],
         pct_invalid: float,
         seed_nr: int = 420,
         mp_cutoff: int = 1e4,
