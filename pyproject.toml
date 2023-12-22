@@ -15,11 +15,20 @@ numpy = "^1.15"
 pandas = "^2"
 dataclasses-json = "^0.6.3"
 colorlog = "^6.5.0"
-langid = "^1.1.6"
-nltk = "^3"
-toml = "^0.10.2"
 psutil = "^5.9.0"
 
+[tool.poetry.group.rule_based.dependencies]
+langid = "^1.1.6"
+nltk = "^3"
+
+[tool.poetry.group.test.dependencies]
+toml = "^0.10.2"
+
+# TODO: update once this engine is introduced
+# [tool.poetry.group.bert]
+# optional = true
+# [tool.poetry.group.bert.dependencies]
+# torch
 
 [build-system]
 requires = ["poetry-core"]
