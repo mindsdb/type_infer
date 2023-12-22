@@ -16,20 +16,16 @@ pandas = "^2"
 dataclasses-json = "^0.6.3"
 colorlog = "^6.5.0"
 psutil = "^5.9.0"
-
-[tool.poetry.group.rule_based.dependencies]
-langid = "^1.1.6"
-nltk = "^3"
-
-[tool.poetry.group.test.dependencies]
 toml = "^0.10.2"
 
-# TODO: update once this engine is introduced
-# [tool.poetry.group.bert]
-# optional = true
-# [tool.poetry.group.bert.dependencies]
-# torch
+# rule based deps, part of core
+langid = "^1.1.6"
+nltk = "^3"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+# TODO: update once this engine is introduced
+[tool.poetry.extras]
+# bert = ["torch"]
