@@ -15,7 +15,7 @@ class TestInferDtypes(unittest.TestCase):
         self.assertEqual(dtyp, dtype.integer)
 
     def test_negative_floats(self):
-        data = pd.DataFrame([-random.randint(-10, 10) for _ in range(100)] + [0.1], columns=['test_col'])
+        data = pd.DataFrame([float(-random.randint(-10, 10)) for _ in range(100)] + [0.1], columns=['test_col'])
         engine = RuleBasedEngine()
         dtyp, dist, ainfo, warn, info = engine.get_column_data_type(data['test_col'], data, 'test_col', 0.0)
         self.assertEqual(dtyp, dtype.float)

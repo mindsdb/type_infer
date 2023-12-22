@@ -1,6 +1,4 @@
 import os
-
-import pandas as pd
 import psutil
 import random
 import logging
@@ -9,12 +7,12 @@ import multiprocessing as mp
 from typing import Iterable
 
 import numpy as np
+import pandas as pd
 from scipy.stats import norm
 
 
 def initialize_log():
     pid = os.getpid()
-
     handler = colorlog.StreamHandler()
     handler.setFormatter(colorlog.ColoredFormatter())
 

@@ -33,3 +33,7 @@ class BaseEngine:
     def infer(self, df) -> TypeInformation:
         """Given a dataframe, infer the types of each column and return a TypeInformation object."""
         raise NotImplementedError
+
+
+class ENGINES:
+    RULE_BASED = 'rule_based'

@@ -1,12 +1,8 @@
 from typing import Dict, Optional
 import pandas as pd
 
-from type_infer.base import TypeInformation
+from type_infer.base import TypeInformation, ENGINES
 from type_infer.rule_based.core import RuleBasedEngine
-
-
-class ENGINES:
-    RULE_BASED = 'rule_based'
 
 
 def infer_types(

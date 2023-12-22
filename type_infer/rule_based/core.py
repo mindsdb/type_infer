@@ -1,18 +1,17 @@
 import re
 import imghdr
 import sndhdr
-from collections import Counter
-from typing import List, Union
 import multiprocessing as mp
+from typing import List, Union
+from collections import Counter
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from type_infer.dtype import dtype
 from type_infer.base import BaseEngine, TypeInformation
-from type_infer.helpers import log, seed, sample_data, get_nr_procs
+from type_infer.helpers import log, seed, sample_data, get_nr_procs, is_nan_numeric, cast_string_to_python_type
 from type_infer.rule_based.helpers import get_language_dist, analyze_sentences, get_identifier_description_mp
-from type_infer.helpers import is_nan_numeric, cast_string_to_python_type
 
 
 class RuleBasedEngine(BaseEngine):
@@ -284,7 +283,7 @@ class RuleBasedEngine(BaseEngine):
         return dtype_counts
 
 
-    def get_column_data_type(self, data: Union[np.ndarray, list], full_data: pd.DataFrame, col_name: str, pct_invalid: float):
+    def get_column_data_type(self, data: Union[pd.Series, np.ndarray, list], full_data: pd.DataFrame, col_name: str, pct_invalid: float):
         """
         Provided the column data, define its data type and data subtype.
 
