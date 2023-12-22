@@ -27,7 +27,7 @@ class TypeInformation:
 
 
 class BaseEngine:
-    def __init__(self, stable = True):
+    def __init__(self, stable=True):
         self.stable = stable  # whether the engine is stable or not (i.e. experimental)
 
     def infer(self, df) -> TypeInformation:

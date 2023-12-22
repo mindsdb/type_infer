@@ -7,6 +7,7 @@ from type_infer.dtype import dtype
 
 get_column_data_type = RuleBasedEngine.get_column_data_type
 
+
 class TestInferDtypes(unittest.TestCase):
     def test_negative_integers(self):
         data = pd.DataFrame([-random.randint(-10, 10) for _ in range(100)], columns=['test_col'])

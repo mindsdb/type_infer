@@ -15,7 +15,7 @@ from type_infer.rule_based.helpers import get_language_dist, analyze_sentences, 
 
 
 class RuleBasedEngine(BaseEngine):
-    def __init__(self, config = None):
+    def __init__(self, config=None):
         """
         :param config: a dictionary containing the configuration for the engine
                 pct_invalid : float
@@ -96,9 +96,9 @@ class RuleBasedEngine(BaseEngine):
         # @TODO Column removal logic was here, if the column was an identifier, move it elsewhere
         return type_information
 
-
     # @TODO: hardcode for distance, time, subunits of currency (e.g. cents) and other common units
     # @TODO: Add tests with plenty of examples
+
     def get_quantity_col_info(self, col_data: pd.Series) -> str:
         assert isinstance(col_data, pd.Series)
         char_const = None
@@ -134,7 +134,6 @@ class RuleBasedEngine(BaseEngine):
         else:
             return False, None
 
-
     def get_binary_type(self, element: object) -> str:
         try:
             is_img = imghdr.what(element)
@@ -152,7 +151,6 @@ class RuleBasedEngine(BaseEngine):
         except Exception:
             # Not a file or file doesn't exist
             return None
-
 
     def get_numeric_type(self, element: object) -> str:
         """ Returns the subtype inferred from a number string, or False if its not a number"""
@@ -176,7 +174,6 @@ class RuleBasedEngine(BaseEngine):
                     return None
             except Exception:
                 return None
-
 
     def type_check_sequence(self, element: object) -> str:
         dtype_guess = None
@@ -259,7 +256,6 @@ class RuleBasedEngine(BaseEngine):
 
         return None
 
-
     def count_data_types_in_column(self, data):
         dtype_counts = Counter()
 
@@ -282,8 +278,12 @@ class RuleBasedEngine(BaseEngine):
 
         return dtype_counts
 
-
-    def get_column_data_type(self, data: Union[pd.Series, np.ndarray, list], full_data: pd.DataFrame, col_name: str, pct_invalid: float):
+    def get_column_data_type(self,
+                             data: Union[pd.Series, np.ndarray, list],
+                             full_data: pd.DataFrame,
+                             col_name: str,
+                             pct_invalid: float
+                             ):
         """
         Provided the column data, define its data type and data subtype.
 

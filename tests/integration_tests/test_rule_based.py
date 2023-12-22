@@ -47,7 +47,6 @@ class TestRuleBasedTypeInference(unittest.TestCase):
         df = pd.read_csv("tests/data/stack_overflow_survey_sample.csv")
         config = {'engine': 'rule_based', 'pct_invalid': 0, 'seed': 420, 'mp_cutoff': 1e4}
 
-
         expected_types = {
             'Respondent': 'integer',
             'Professional': 'binary',
