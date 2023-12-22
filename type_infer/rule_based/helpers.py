@@ -1,14 +1,13 @@
 import re
 import nltk
 import string
+from typing import Iterable
+from collections import Counter, defaultdict
 
 import numpy as np
 import scipy.stats as st
 from langid.langid import LanguageIdentifier
 from langid.langid import model as langid_model
-
-from typing import Iterable
-from collections import Counter, defaultdict
 
 from type_infer.dtype import dtype
 

@@ -3,8 +3,10 @@ from type_infer import dtype
 from type_infer import api
 from type_infer import helpers
 
-
 __version__ = '0.0.18'
 
 
-__all__ = ['base', 'dtype', 'api', 'helpers', '__version__']
+__all__ = [
+    '__version__',
+    'base', 'dtype', 'api', 'helpers',
+]

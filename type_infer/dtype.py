@@ -46,4 +46,5 @@ class dtype:
     empty = "empty"
     invalid = "invalid"
 
-# TODO: introduce "modifiers"?
+
+# TODO: modifier class + system
