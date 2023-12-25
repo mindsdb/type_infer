@@ -45,3 +45,6 @@ class dtype:
     # Misc (Unk/NaNs)
     empty = "empty"
     invalid = "invalid"
+
+
+# TODO: modifier class + system
