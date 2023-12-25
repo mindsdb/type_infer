@@ -46,7 +46,6 @@ class RuleBasedEngine(BaseEngine):
             log.info(f'Using {pool_size} processes to deduct types.')
             pool = mp.Pool(processes=pool_size)
             # column-wise parallelization  # TODO: evaluate switching to row-wise split instead
-            # TODO: this would be the call to the inference engine -> column in, type out
             answer_arr = pool.starmap(self.get_column_data_type, [
                 (sample_df[x].dropna(), data[x], x, self.config['pct_invalid']) for x in sample_df.columns.values
             ])
