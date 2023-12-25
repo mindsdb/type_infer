@@ -5,13 +5,14 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 from type_infer.dtype import dtype
-from type_infer.infer import infer_types
+from type_infer.api import infer_types
 
 
-class TestTypeInference(unittest.TestCase):
+class TestRuleBasedTypeInference(unittest.TestCase):
     def test_0_airline_sentiment(self):
         df = pd.read_csv("tests/data/airline_sentiment_sample.csv")
-        inferred_types = infer_types(df, pct_invalid=0)
+        config = {'engine': 'rule_based', 'pct_invalid': 0, 'seed': 420, 'mp_cutoff': 1e4}
+        inferred_types = infer_types(df, config=config)
 
         expected_types = {
             'airline_sentiment': 'categorical',
@@ -44,6 +45,7 @@ class TestTypeInference(unittest.TestCase):
 
     def test_1_stack_overflow_survey(self):
         df = pd.read_csv("tests/data/stack_overflow_survey_sample.csv")
+        config = {'engine': 'rule_based', 'pct_invalid': 0, 'seed': 420, 'mp_cutoff': 1e4}
 
         expected_types = {
             'Respondent': 'integer',
@@ -68,7 +70,7 @@ class TestTypeInference(unittest.TestCase):
             'Professional': 'No Information'
         }
 
-        inferred_types = infer_types(df, pct_invalid=0)
+        inferred_types = infer_types(df, config=config)
 
         for col in expected_types:
             self.assertTrue(expected_types[col], inferred_types.dtypes[col])
@@ -90,7 +92,10 @@ class TestTypeInference(unittest.TestCase):
         # manual tinkering
         df['float'].iloc[-n_corrupted:] = 'random string'
 
-        inferred_types = infer_types(df, pct_invalid=100 * (n_corrupted) / n_points)
+        pct_invalid = 100 * (n_corrupted) / n_points
+        config = {'engine': 'rule_based', 'pct_invalid': pct_invalid, 'seed': 420, 'mp_cutoff': 1e4}
+
+        inferred_types = infer_types(df, config=config)
         expected_types = {
             'date': dtype.date,
             'datetime': dtype.datetime,

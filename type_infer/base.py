@@ -24,3 +24,16 @@ class TypeInformation:
         self.dtypes = dict()
         self.additional_info = dict()
         self.identifiers = dict()
+
+
+class BaseEngine:
+    def __init__(self, stable=True):
+        self.stable = stable  # whether the engine is stable or not (i.e. experimental)
+
+    def infer(self, df) -> TypeInformation:
+        """Given a dataframe, infer the types of each column and return a TypeInformation object."""
+        raise NotImplementedError
+
+
+class ENGINES:
+    RULE_BASED = 'rule_based'
