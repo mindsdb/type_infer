@@ -6,8 +6,8 @@ from collections import Counter, defaultdict
 
 import numpy as np
 import scipy.stats as st
-from langid.langid import LanguageIdentifier
-from langid.langid import model as langid_model
+from py3langid.langid import LanguageIdentifier
+from py3langid.langid import MODEL_FILE as LANGID_MODEL_FILE
 
 from type_infer.dtype import dtype
 
@@ -109,7 +109,7 @@ def get_language_dist(data):
     lang_dist = defaultdict(lambda: 0)
     lang_dist['Unknown'] = 0
     lang_probs_cache = dict()
-    identifier = LanguageIdentifier.from_modelstring(langid_model, norm_probs=True)
+    identifier = LanguageIdentifier.from_pickled_model(LANGID_MODEL_FILE, norm_probs=True)
     for text in data:
         text = str(text)
         text = text.translate(str.maketrans('', '', string.punctuation))
