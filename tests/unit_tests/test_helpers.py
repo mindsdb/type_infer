@@ -1,6 +1,7 @@
 import unittest
 
 from type_infer import helpers
+from type_infer.rule_based.helpers import get_language_dist
 
 
 class TestCastStringToPythonType(unittest.TestCase):
@@ -32,3 +33,10 @@ class TestIsNanNumeric(unittest.TestCase):
     def test_inf_is_numeric(self):
         self.assertTrue(helpers.is_nan_numeric('inf'))
         self.assertTrue(helpers.is_nan_numeric(float('inf')))
+
+
+class TestLangid(unittest.TestCase):
+    def test_get_language_dist(self):
+        dist = get_language_dist(['This is clearly English', 'Y esto es claramente español'])
+        self.assertTrue('en' in dist and dist['en'] == 1)
+        self.assertTrue('es' in dist and dist['es'] == 1)

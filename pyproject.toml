@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "type_infer"
-version = "0.0.18"
+version = "0.0.19"
 description = "Automated type inference for Machine Learning pipelines."
 authors = ["MindsDB Inc. <hello@mindsdb.com>"]
 license = "GPL-3.0"
@@ -19,7 +19,7 @@ psutil = "^5.9.0"
 toml = "^0.10.2"
 
 # rule based deps, part of core
-langid = "^1.1.6"
+py3langid = ">=0.2.2,<0.3"
 nltk = "^3"
 
 [build-system]
