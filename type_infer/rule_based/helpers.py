@@ -15,7 +15,7 @@ from type_infer.dtype import dtype
 try:
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    nltk.download('punkt')
+    nltk.download('punkt', quiet=True)
 
 try:
     from nltk.corpus import stopwords
