@@ -29,6 +29,9 @@ jobs:
         pip install --no-cache-dir -e .
         pip install flake8
         pip install coverage
+    - name: Install NLTK data
+      run: |
+        python -m nltk.downloader punkt
     - name: Lint with flake8
       run: |
         python -m flake8 .
