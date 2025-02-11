@@ -24,7 +24,7 @@ jobs:
       run: |
         sudo apt install pandoc
         python -m pip install --upgrade pip
-        pip install install 'Sphinx==6.2.1' 'sphinx-autoapi==3.0.0' 'sphinx-autodoc-typehints' 'sphinx-code-include' 'sphinx-rtd-theme' 'sphinxcontrib-applehelp' 'sphinxcontrib-devhelp' 'sphinxcontrib-htmlhelp' 'sphinxcontrib-jsmath' 'sphinxcontrib-napoleon' 'sphinxcontrib-qthelp' 'sphinxcontrib-serializinghtml' autoapi nbsphinx myst_parser pandoc jupyter matplotlib imblearn fsspec
+        pip install 'Sphinx==6.2.1' 'sphinx-autoapi==3.0.0' 'sphinx-autodoc-typehints' 'sphinx-code-include' 'sphinx-rtd-theme' 'sphinxcontrib-applehelp' 'sphinxcontrib-devhelp' 'sphinxcontrib-htmlhelp' 'sphinxcontrib-jsmath' 'sphinxcontrib-napoleon' 'sphinxcontrib-qthelp' 'sphinxcontrib-serializinghtml' autoapi nbsphinx myst_parser pandoc jupyter matplotlib imblearn fsspec
         pip install --no-cache-dir -e .
     - name: Make the docs
       run: |

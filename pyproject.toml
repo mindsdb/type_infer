@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "type_infer"
-version = "0.0.20"
+version = "0.0.21"
 description = "Automated type inference for Machine Learning pipelines."
 authors = ["MindsDB Inc. <hello@mindsdb.com>"]
 license = "GPL-3.0"
@@ -20,7 +20,7 @@ toml = "^0.10.2"
 
 # rule based deps, part of core
 py3langid = ">=0.2.2,<0.3"
-nltk = "^3"
+nltk = "^3.9"
 
 [build-system]
 requires = ["poetry-core"]
