@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "type_infer"}]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.13"
+python = ">=3.10,<3.13"
 python-dateutil = "^2.1"
 scipy = "^1"
 numpy = "^1.15"
