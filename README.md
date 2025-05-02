@@ -1,4 +1,5 @@
 # MindsDB Type Infer
+
 <h1 align="center">
 	<img width="300" src="https://github.com/mindsdb/mindsdb_native/blob/stable/assets/MindsDBColorPurp@3x.png?raw=true" alt="MindsDB">
 	<br>
@@ -30,6 +31,47 @@ Automated type inference for Machine Learning pipelines.
 
 
 In the context of tabular data, `type_infer` aims for optimal interpretation of each column’s data type for ML use cases. For example, strings with date or time format would be classified as timestamps, or integers as categorical if there is a sufficiently small set of unique values in the column.
+
+# Installation
+
+Install the package easily using pip:
+
+```
+pip install type_infer
+```
+> Note: We recommend using a Python virtual environment.
+
+## Development Environment Setup
+
+To set up a development environment:
+
+1. Clone the repository:
+```
+git clone https://github.com/mindsdb/type_infer.git
+```
+
+2. Navigate to the cloned directory and install in editable mode:
+```
+cd type_infer
+pip install --editable .
+```
+
+### Running Tests
+
+Tp run unit tests execute:
+```
+python -m unittest discover tests
+```
+
+## Contributing
+
+We welcome and appreciate contributions from the community! Here's how you can help:
+
+* Report bugs
+* Improve documentation
+* Solve open issues
+* Propose or discuss new features
+* Test with your own datasets and provide feedback
 
 # Documentation
 <a href="https://mindsdb.github.io/type_infer">Documentation link</a>
