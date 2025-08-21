@@ -3,7 +3,7 @@ from type_infer import dtype
 from type_infer import api
 from type_infer import helpers
 
-__version__ = '0.0.23'
+__version__ = '0.0.24'
 
 
 __all__ = [
