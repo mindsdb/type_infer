@@ -90,6 +90,9 @@ class TestRuleBasedTypeInference(unittest.TestCase):
         })
 
         # manual tinkering
+        # Keep the column capable of holding mixed values on Pandas 3, which
+        # rejects silently upcasting a float64 column during assignment.
+        df['float'] = df['float'].astype(object)
         df['float'].iloc[-n_corrupted:] = 'random string'
 
         pct_invalid = 100 * (n_corrupted) / n_points
