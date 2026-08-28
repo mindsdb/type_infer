@@ -83,15 +83,15 @@
 <div class="viewcode-block" id="TypeInformation"><a class="viewcode-back" href="../base.html#base.TypeInformation">[docs]</a><span class="nd">@dataclass_json</span>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TypeInformation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    For a dataset, provides information on columns types, how they&#39;re used, and any other potential identifiers.</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    For a dataset, provides information on columns types, how they're used, and any other potential identifiers.</span>
 
 <span class="sd">    ``TypeInformation`` is generated within :py:func:`infer.infer_types`, where small samples of each column are evaluated in a custom framework to understand what kind of data type the model is. The user may override data types, but it is recommended to do so within a JSON-AI config file.</span>
 
-<span class="sd">    :param dtypes: For each column&#39;s name, the associated data type inferred.</span>
+<span class="sd">    :param dtypes: For each column's name, the associated data type inferred.</span>
 <span class="sd">    :param additional_info: Any possible sub-categories or additional descriptive information.</span>
 <span class="sd">    :param identifiers: Columns within the dataset highly suspected of being identifiers or IDs. These do not contain informatic value, therefore will be ignored in subsequent training/analysis procedures unless manually indicated.</span>
-<span class="sd">    &quot;&quot;&quot;</span> <span class="c1"># noqa</span>
+<span class="sd">    """</span> <span class="c1"># noqa</span>
 
     <span class="n">dtypes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="n">additional_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
@@ -108,12 +108,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stable</span> <span class="o">=</span> <span class="n">stable</span>  <span class="c1"># whether the engine is stable or not (i.e. experimental)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeInformation</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a dataframe, infer the types of each column and return a TypeInformation object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Given a dataframe, infer the types of each column and return a TypeInformation object."""</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ENGINES</span><span class="p">:</span>
-    <span class="n">RULE_BASED</span> <span class="o">=</span> <span class="s1">&#39;rule_based&#39;</span>
+    <span class="n">RULE_BASED</span> <span class="o">=</span> <span class="s1">'rule_based'</span>
 </pre></div>
 
            </div>
