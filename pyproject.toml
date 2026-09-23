@@ -17,8 +17,8 @@ dataclasses-json = "^0.6.3"
 colorlog = "^6.5.0"
 psutil = "^7.0"
 toml = "^0.10.2"
-standard-imghdr = "^3.13"
-standard-sndhdr = "^3.13"
+standard-imghdr = { version = "^3.13", python = "^3.13" }
+standard-sndhdr = { version = "^3.13", python = "^3.13" }
 
 # rule based deps, part of core
 py3langid = ">=0.2.2,<0.3"
