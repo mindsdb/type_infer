@@ -27,13 +27,27 @@ class TypeInformation:
 
 
 class BaseEngine:
-    def __init__(self, stable=True):
+    """Abstract base class for type inference engines."""
+
+    def __init__(self, stable: bool = True):
+        """
+        Initialize the base engine.
+
+        :param stable: Whether this engine implementation is production-stable or experimental.
+        """
         self.stable = stable  # whether the engine is stable or not (i.e. experimental)
 
     def infer(self, df) -> TypeInformation:
-        """Given a dataframe, infer the types of each column and return a TypeInformation object."""
+        """
+        Given a dataframe, infer the types of each column and return a TypeInformation object.
+
+        :param df: Input pandas DataFrame to analyze.
+        :return: TypeInformation containing inferred column data types.
+        """
         raise NotImplementedError
 
 
 class ENGINES:
+    """Supported type inference engine identifiers."""
+
     RULE_BASED = 'rule_based'
