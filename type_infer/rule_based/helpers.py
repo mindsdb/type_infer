@@ -25,11 +25,26 @@ except LookupError:
 
 
 def get_identifier_description_mp(arg_tup):
+    """
+    Multiprocessing wrapper for get_identifier_description.
+
+    :param arg_tup: Tuple containing (data, column_name, data_dtype).
+    :return: Identifier classification string or None.
+    """
     data, column_name, data_dtype = arg_tup
     return get_identifier_description(data, column_name, data_dtype)
 
 
 def get_identifier_description(data: Iterable, column_name: str, data_dtype: dtype):
+    """
+    Examine column data and metadata to determine identifier classification
+    (e.g., 'No Information', 'Hash-like identifier', 'Foreign key', 'UUID', 'Unknown identifier').
+
+    :param data: Iterable of column values.
+    :param column_name: Name of the column.
+    :param data_dtype: Inferred data type of the column.
+    :return: Classification description string, or None if not an identifier.
+    """
     data = list(data)
     if isinstance(data[0], list):
         nr_unique = len(set(tuple(x) for x in data))
@@ -88,6 +103,7 @@ def get_identifier_description(data: Iterable, column_name: str, data_dtype: dty
 
 
 def _is_foreign_key_name(name):
+    """Check if the column name ends with common foreign key suffixes (e.g. '_id', '-id')."""
     for endings in ['id', 'ID', 'Id']:
         for add in ['-', '_', ' ']:
             if name.endswith(add + endings):
@@ -99,6 +115,7 @@ def _is_foreign_key_name(name):
 
 
 def _is_identifier_name(name):
+    """Check if the column name contains common identifier keywords."""
     for keyword in ['account', 'uuid', 'identifier', 'user']:
         if keyword in name:
             return True
@@ -106,6 +123,12 @@ def _is_identifier_name(name):
 
 
 def get_language_dist(data):
+    """
+    Classify the languages present in the input text data and return their distribution.
+
+    :param data: Iterable of text values.
+    :return: Dictionary mapping language codes (or 'Unknown') to counts.
+    """
     lang_dist = defaultdict(lambda: 0)
     lang_dist['Unknown'] = 0
     lang_probs_cache = dict()
@@ -130,6 +153,12 @@ def get_language_dist(data):
 
 
 def analyze_sentences(data):
+    """
+    Tokenize sentences, count total words, and compute word and sentence length distributions.
+
+    :param data: Iterable of sentence or text items.
+    :return: Tuple of (total word count, word frequency dict, word count per sentence dict).
+    """
     nr_words = 0
     word_dist = defaultdict(int)
     nr_words_dist = defaultdict(int)
@@ -154,6 +183,7 @@ def analyze_sentences(data):
 
 
 def contains_alnum(text):
+    """Check if the string contains any alphanumeric characters."""
     for c in text:
         if c.isalnum():
             return True
@@ -161,11 +191,12 @@ def contains_alnum(text):
 
 
 def tokenize_text(text):
-    """ Generator instead of list comprehension for optimal memory usage & runtime """
+    """Generator instead of list comprehension for optimal memory usage & runtime."""
     return (t.lower() for t in nltk.word_tokenize(decontracted(text)) if contains_alnum(t))
 
 
 def decontracted(phrase):
+    """Expand standard English contractions into full words."""
     # specific
     phrase = re.sub(r"won\'t", "will not", phrase)
     phrase = re.sub(r"can\'t", "can not", phrase)

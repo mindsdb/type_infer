@@ -17,6 +17,17 @@ def infer_types(
     ----------
     data : pd.DataFrame
         The input dataset for which we want to infer data type information.
+    config : Optional[Dict], optional
+        Configuration dictionary controlling inference behavior. Supported keys include:
+        - 'engine': Inference engine to use (default: 'rule_based').
+        - 'pct_invalid': Percentage threshold of invalid values allowed (default: 2).
+        - 'seed': Random seed for sampling reproducibility (default: 420).
+        - 'mp_cutoff': Row threshold to enable multiprocessing (default: 1e4).
+
+    Returns
+    -------
+    TypeInformation
+        Object containing column types, additional descriptive metadata, and identifiers.
     """
     # Set global defaults if missing
     if config is None:

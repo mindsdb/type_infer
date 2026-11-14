@@ -12,6 +12,11 @@ from scipy.stats import norm
 
 
 def initialize_log():
+    """
+    Initialize and configure the colored logger for the type_infer package.
+
+    :return: Configured logging.Logger instance with PID and log level.
+    """
     pid = os.getpid()
     handler = colorlog.StreamHandler()
     handler.setFormatter(colorlog.ColoredFormatter())
@@ -27,6 +32,13 @@ log = initialize_log()
 
 
 def get_nr_procs(df=None):
+    """
+    Determine the optimal number of worker processes to use based on available
+    system memory, CPU count, or environment variables.
+
+    :param df: Optional pandas DataFrame to estimate memory footprint.
+    :return: Number of parallel worker processes to spawn.
+    """
     if 'MINDSDB_N_WORKERS' in os.environ:
         try:
             n = int(os.environ['MINDSDB_N_WORKERS'])
@@ -48,6 +60,11 @@ def get_nr_procs(df=None):
 
 
 def seed(seed_nr: int) -> None:
+    """
+    Set random seed for reproducibility across numpy and random modules.
+
+    :param seed_nr: Integer seed value.
+    """
     np.random.seed(seed_nr)
     random.seed(seed_nr)
 
@@ -93,6 +110,13 @@ def cast_string_to_python_type(string):
 
 
 def clean_float(val):
+    """
+    Sanitize and parse a value into a float, stripping surrounding quotes,
+    whitespace, and normalizing comma decimal separators.
+
+    :param val: Input value or string representation of a float.
+    :return: Float value if successfully parsed, or None.
+    """
     if isinstance(val, (int, float)):
         return float(val)
 
@@ -113,6 +137,13 @@ def clean_float(val):
 
 
 def sample_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extract a statistically representative random sample of rows from a DataFrame
+    based on calculated sample size.
+
+    :param df: Input pandas DataFrame to sample from.
+    :return: Sampled subset of rows as a pandas DataFrame.
+    """
     population_size = len(df)
     if population_size <= 50:
         sample_size = population_size
